@@ -100,17 +100,14 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* Text Overlay with Colorful Blur Effect */}
+      {/* Text Overlay with Warm Cream Blur Effect */}
       <div className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center">
         <div className="text-center overflow-hidden relative p-10">
           {/* Main Title */}
           <h1 
-            className="text-[80px] md:text-[180px] font-bold tracking-[3px] transition-all duration-500"
+            className="text-[80px] md:text-[180px] font-bold tracking-[3px] transition-all duration-500 text-warm-cream"
             style={{
               fontFamily: "'Playfair Display', serif",
-              background: "linear-gradient(to right, #fff, #a5f3fc, #e879f9)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
               filter: isTransitioning ? "blur(20px) contrast(0.5)" : "blur(0px) contrast(1)",
               opacity: isTransitioning ? 0 : 1,
               transform: isTransitioning ? "scale(0.9)" : "scale(1)",
@@ -121,10 +118,9 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
           
           {/* Subtitle */}
           <p 
-            className="text-[21px] md:text-[28px] mt-[60px] md:mt-[90px] font-light tracking-[2px] transition-all duration-500 delay-100"
+            className="text-[21px] md:text-[28px] mt-[60px] md:mt-[90px] font-light tracking-[2px] transition-all duration-500 delay-100 text-warm-cream/80"
             style={{
               fontFamily: "'Roboto', sans-serif",
-              color: "rgba(255, 255, 255, 0.8)",
               filter: isTransitioning ? "blur(10px)" : "blur(0px)",
               opacity: isTransitioning ? 0 : 1,
               transform: isTransitioning ? "translateY(20px)" : "translateY(0)",
