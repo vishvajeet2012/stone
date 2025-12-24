@@ -14,7 +14,7 @@ import DeconstructedGalleryHero from "@/Components/deconstrtion";
 
 export default function Home() {
   return (
-    <main className=" w-full bg-warm-cream  overflow-hidden">
+    <main className=" w-full bg-warm-cream d overflow-hidden">
       <Hero/>
       {/* <DeconstructedGalleryHero/> */}
       <AnnouncementHomepage />
