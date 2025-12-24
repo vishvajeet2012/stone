@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface KineticSliderProps {
@@ -11,22 +11,29 @@ interface KineticSliderProps {
 export default function KineticSlider({ images, texts }: KineticSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track mouse for cursor displacement effect
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+        const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+        setMousePos({ x, y });
+      }
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
 
   // Preload images
   useEffect(() => {
-    const preloadImages = async () => {
-      await Promise.all(
-        images.map((src: string) => {
-          return new Promise<void>((resolve) => {
-            const img = new Image();
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
-            img.src = src;
-          });
-        })
-      );
-    };
-    preloadImages();
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
   }, [images]);
 
   const handleTransition = useCallback((direction: "next" | "prev") => {
@@ -37,53 +44,105 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
       ? (currentIndex + 1) % images.length 
       : (currentIndex - 1 + images.length) % images.length;
 
+    // Transition timing matching rgbKineticSlider (1s duration)
     setTimeout(() => {
       setCurrentIndex(nextIndex);
-      setIsTransitioning(false);
-    }, 600);
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 500);
+    }, 500);
   }, [currentIndex, images.length, isTransitioning]);
 
   const currentText = texts[currentIndex] || ["", ""];
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-black">
-      {/* Background Images with Transition */}
+    <div 
+      ref={containerRef}
+      className="relative w-full h-screen overflow-hidden bg-black"
+    >
+      {/* Background Images with Kinetic Transition Effect */}
       <div className="absolute inset-0">
         {images.map((src, index) => (
           <div
             key={index}
-            className={`absolute inset-0 transition-all duration-700 ease-in-out ${
-              index === currentIndex 
-                ? "opacity-100 scale-100" 
-                : "opacity-0 scale-110"
-            }`}
+            className="absolute inset-0 transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)]"
             style={{
-              backgroundImage: `url(${src})`,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
+              opacity: index === currentIndex ? 1 : 0,
+              transform: `
+                scale(${index === currentIndex ? 1 : 1.2}) 
+                translateX(${index === currentIndex ? 0 : (index > currentIndex ? 100 : -100)}px)
+                perspective(1000px) 
+                rotateY(${mousePos.x * 2}deg) 
+                rotateX(${-mousePos.y * 2}deg)
+              `,
+              filter: isTransitioning ? "blur(20px) saturate(1.5)" : "blur(0px) saturate(1)",
             }}
-          />
+          >
+            <div
+              className="w-full h-full bg-cover bg-center"
+              style={{
+                backgroundImage: `url(${src})`,
+                transform: `translate(${mousePos.x * -10}px, ${mousePos.y * -10}px) scale(1.1)`,
+                transition: "transform 0.3s ease-out",
+              }}
+            />
+          </div>
         ))}
         
+        {/* RGB Split Effect Overlay during transition */}
+        {isTransitioning && (
+          <>
+            <div 
+              className="absolute inset-0 mix-blend-screen opacity-30 pointer-events-none"
+              style={{
+                backgroundImage: `url(${images[currentIndex]})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                transform: "translateX(-5px)",
+                filter: "blur(3px) hue-rotate(90deg)",
+              }}
+            />
+            <div 
+              className="absolute inset-0 mix-blend-screen opacity-30 pointer-events-none"
+              style={{
+                backgroundImage: `url(${images[currentIndex]})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                transform: "translateX(5px)",
+                filter: "blur(3px) hue-rotate(-90deg)",
+              }}
+            />
+          </>
+        )}
+        
         {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-linear-to-b from-black/30 via-transparent to-black/50" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* Text Overlay */}
-      <div className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center">
+      {/* Text Overlay with Tilt Effect */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center"
+        style={{
+          transform: `perspective(1000px) rotateY(${mousePos.x * 3}deg) rotateX(${-mousePos.y * 3}deg)`,
+          transition: "transform 0.2s ease-out",
+        }}
+      >
         <div className="text-center overflow-hidden">
           <h1 
-            key={`title-${currentIndex}`}
-            className={`text-8xl md:text-[10rem] font-bold tracking-tighter text-warm-cream font-serif transition-all duration-500 ${
-              isTransitioning ? "opacity-0 translate-y-8" : "opacity-100 translate-y-0"
+            className={`text-[125px] md:text-[180px] font-bold tracking-[3px] text-white font-serif transition-all duration-500 ${
+              isTransitioning ? "opacity-0 translate-y-20 blur-sm" : "opacity-100 translate-y-0 blur-0"
             }`}
+            style={{
+              textShadow: isTransitioning 
+                ? "-3px 0 #ff0000, 3px 0 #00ffff" 
+                : "none",
+            }}
           >
             {currentText[0]}
           </h1>
           <p 
-            key={`subtitle-${currentIndex}`}
-            className={`text-xl md:text-3xl mt-6 font-light text-warm-cream/80 transition-all duration-500 delay-100 ${
-              isTransitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"
+            className={`text-[21px] md:text-[28px] mt-[90px] font-light text-white/80 tracking-[2px] transition-all duration-500 delay-100 ${
+              isTransitioning ? "opacity-0 translate-y-10" : "opacity-100 translate-y-0"
             }`}
           >
             {currentText[1]}
@@ -91,50 +150,29 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
         </div>
       </div>
 
-      {/* Navigation */}
-      <nav className="absolute z-20 top-1/2 w-full flex justify-between px-6 md:px-16 -translate-y-1/2 pointer-events-none">
+      {/* Navigation - matching rgbKineticSlider style */}
+      <nav className="absolute z-20 top-1/2 w-full flex justify-between px-[10vw] -translate-y-1/2 pointer-events-none">
         <button 
           onClick={() => handleTransition("prev")}
-          className="pointer-events-auto text-warm-cream hover:scale-110 transition-transform duration-300"
+          className="pointer-events-auto text-white hover:opacity-50 transition-opacity duration-300 group flex flex-col items-start"
           disabled={isTransitioning}
         >
-          <ChevronLeft className="w-12 h-12 md:w-16 md:h-16" strokeWidth={1.5} />
+          <span className="text-lg tracking-wide mb-2">Prev</span>
+          <span className="block h-px w-12 bg-white group-hover:w-0 transition-all duration-300" />
         </button>
         
         <button 
           onClick={() => handleTransition("next")}
-          className="pointer-events-auto text-warm-cream hover:scale-110 transition-transform duration-300"
+          className="pointer-events-auto text-white hover:opacity-50 transition-opacity duration-300 group flex flex-col items-end"
           disabled={isTransitioning}
         >
-          <ChevronRight className="w-12 h-12 md:w-16 md:h-16" strokeWidth={1.5} />
+          <span className="text-lg tracking-wide mb-2">Next</span>
+          <span className="block h-px w-12 bg-white group-hover:w-0 transition-all duration-300" />
         </button>
       </nav>
 
-      {/* Slide indicators */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-3">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              if (!isTransitioning && index !== currentIndex) {
-                setIsTransitioning(true);
-                setTimeout(() => {
-                  setCurrentIndex(index);
-                  setIsTransitioning(false);
-                }, 600);
-              }
-            }}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              index === currentIndex 
-                ? "bg-warm-cream w-6" 
-                : "bg-warm-cream/40 hover:bg-warm-cream/60"
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Swipe hint */}
-      <div className="absolute bottom-10 left-10 md:left-20 z-20 text-sm text-warm-cream/60">
+      {/* Swipe notice */}
+      <div className="absolute bottom-12 left-12 z-20 text-sm text-white/50">
         Swipe left... or right
       </div>
     </div>
