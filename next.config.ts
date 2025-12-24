@@ -12,9 +12,9 @@ const nextConfig: NextConfig = {
 
   async headers() {
     return [
-      // Cache all images (JPG, JPEG, PNG, WebP, GIF, SVG, AVIF) for 1 year
+      // Cache WebP images at root
       {
-        source: "/:all*(.(jpg|jpeg|png|webp|gif|svg|avif))",
+        source: "/:file*.webp",
         headers: [
           {
             key: "Cache-Control",
@@ -22,9 +22,49 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Your existing MP4 caching
+      // Cache JPEG images at root
       {
-        source: "/:all*(mp4)",
+        source: "/:file*.jpeg",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // Cache JPG images at root
+      {
+        source: "/:file*.jpg",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // Cache SVG files at root
+      {
+        source: "/:file*.svg",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // Cache MP4 video (promotionVideo.mp4)
+      {
+        source: "/:file*.mp4",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // Cache _next/static assets
+      {
+        source: "/_next/static/:path*",
         headers: [
           {
             key: "Cache-Control",
