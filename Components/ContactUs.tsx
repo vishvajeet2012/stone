@@ -6,8 +6,18 @@ import { MapPin, Phone, Mail } from "lucide-react";
 export default function ContactUs() {
   return (
     <section className="w-full bg-warm-cream py-20 px-4 md:px-8 relative overflow-hidden">
-        {/* Background Decorative Element */}
+        {/* Background Decorative Element - Right */}
         <div className="absolute top-0 right-0 w-1/2 h-full bg-saddle-brown/5 rounded-l-[10rem] z-0 hidden lg:block" />
+
+        
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] z-0 opacity-10 pointer-events-none">
+            <svg width="100%" height="100%" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="0" cy="0" r="300" stroke="#8B4513" strokeWidth="2" strokeDasharray="10 10" />
+                <circle cx="0" cy="0" r="250" stroke="#8B4513" strokeWidth="1" />
+                <circle cx="0" cy="0" r="200" stroke="#8B4513" strokeWidth="4" opacity="0.5" />
+                <path d="M0 400 Q 200 200 400 0" stroke="#8B4513" strokeWidth="1" opacity="0.3" />
+            </svg>
+        </div>
 
       <div className="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         
