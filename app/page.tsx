@@ -13,7 +13,8 @@ import Image from "next/image";
 export default function Home() {
   return (
     <main className=" w-full bg-warm-cream  overflow-hidden">
-      {/* <Hero/> */}
+      <Hero/>
+   
       <AnnouncementHomepage />
 
       <TopCategory/>
