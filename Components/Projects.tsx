@@ -57,8 +57,16 @@ const Projects = () => {
             Our Projects
          </h2>
       </div>
-      <div className="flex h-full w-full items-center justify-center overflow-hidden">
-        <HoverExpand_001 className="" images={images} />
+      <div className="h-full w-full">
+        {/* Desktop View: Horizontal - Hidden on mobile, visible on md+ */}
+        <div className="hidden md:flex items-center justify-center overflow-hidden">
+             <HoverExpandHorizontal className="" images={images} />
+        </div>
+
+        {/* Mobile View: Vertical - Visible on mobile, hidden on md+ */}
+        <div className="md:hidden flex items-center justify-center overflow-hidden bg-[#f5f4f3] rounded-3xl">
+             <HoverExpandVertical className="" images={images} />
+        </div>
       </div>
     </section>
   );
@@ -66,14 +74,15 @@ const Projects = () => {
 
 export default Projects;
 
-const HoverExpand_001 = ({
+// --- Desktop Component (Horizontal) ---
+const HoverExpandHorizontal = ({
   images,
   className,
 }: {
   images: { src: string; alt: string; code: string }[];
   className?: string;
 }) => {
-  const [activeImage, setActiveImage] = useState<number | null>(0); // Default to first being active
+  const [activeImage, setActiveImage] = useState<number | null>(null); // Default null (all closed)
 
   return (
     <motion.div
@@ -91,19 +100,18 @@ const HoverExpand_001 = ({
         transition={{ duration: 0.3 }}
         className="w-full"
       >
-        <div className="flex w-full items-center justify-center gap-2">
+        <div className="flex w-full items-center justify-center gap-2" onMouseLeave={() => setActiveImage(null)}>
           {images.map((image, index) => (
             <motion.div
               key={index}
               className="relative cursor-pointer overflow-hidden rounded-3xl"
-              initial={{ width: "4rem", height: "24rem" }}
+              initial={{ width: "5rem", height: "24rem" }}
               animate={{
-                width: activeImage === index ? "30rem" : "5rem", // Adjusted sizes for better fit
+                width: activeImage === index ? "30rem" : "5rem", // Open: 30rem, Closed: 5rem
                 height: "24rem",
               }}
               transition={{ duration: 0.4, ease: "easeInOut" }} // Smoother transition
-              onClick={() => setActiveImage(index)}
-              onHoverStart={() => setActiveImage(index)}
+              onMouseEnter={() => setActiveImage(index)}
             >
               <AnimatePresence>
                 {activeImage === index && (
@@ -137,6 +145,87 @@ const HoverExpand_001 = ({
               </AnimatePresence>
               
               <Image
+                src={image.src}
+                alt={image.alt}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 400px"
+              />
+            </motion.div>
+          ))}
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+
+// --- Mobile Component (Vertical) ---
+const HoverExpandVertical = ({
+  images,
+  className,
+}: {
+  images: { src: string; alt: string; code: string }[];
+  className?: string;
+}) => {
+  const [activeImage, setActiveImage] = useState<number | null>(null);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, translateY: 20 }}
+      animate={{ opacity: 1, translateY: 0 }}
+      transition={{
+        duration: 0.3,
+        delay: 0.5,
+      }}
+      className={cn("relative w-full max-w-6xl px-5 py-8", className)}
+    >
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-full"
+      >
+        <div className="flex w-full flex-col items-center justify-center gap-2">
+          {images.map((image, index) => (
+            <motion.div
+              key={index}
+              className="group relative cursor-pointer overflow-hidden rounded-3xl w-full"
+              initial={{ height: "4rem" }}
+              animate={{
+                height: activeImage === index ? "24rem" : "4rem",
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              onClick={() => setActiveImage(activeImage === index ? null : index)}
+            >
+              <AnimatePresence>
+                {activeImage === index && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute h-full w-full bg-linear-to-t from-black/50 to-transparent z-10"
+                  />
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {activeImage === index && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    className="absolute bottom-0 left-0 right-0 p-6 z-20"
+                  >
+                     <h3 className="text-2xl font-serif font-bold text-warm-cream mb-1">
+                      {image.code}
+                    </h3>
+                    <p className="text-sm text-warm-cream/80 font-sans">
+                        {image.alt}
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+               <Image
                 src={image.src}
                 alt={image.alt}
                 fill
