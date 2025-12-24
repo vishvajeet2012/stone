@@ -8,11 +8,11 @@ export default {
   theme: {
     extend: {
       colors: {
-        "warm-cream": "#f5f1ed",
-        "saddle-brown": "#885a2b",
+        "warm-cream": "#F5F1ED",
+        "saddle-brown": "#8B5A2B",
         "modern-earthy": "#5A6B5B",
-        background: "#f5f1ed",
-        foreground: "#885a2b",
+        background: "#F5F1ED",
+        foreground: "#8B5A2B",
       },
       fontFamily: {
         serif: ["var(--font-playfair)", "serif"],

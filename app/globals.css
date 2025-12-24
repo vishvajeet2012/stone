@@ -1,12 +1,11 @@
 @import "tailwindcss";
 
-
 @custom-variant dark (&:is(.dark *));
 
 @theme {
   --color-warm-cream: #f5f1ed;
-  --color-saddle-brown: #885a2b;
-  --color-modern-earthy: #5A6B5B;
+  --color-saddle-brown: #8b5a2b;
+  --color-modern-earthy: #5a6b5b;
 
   --color-background: var(--color-warm-cream);
   --color-foreground: var(--color-saddle-brown);
