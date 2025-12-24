@@ -12,15 +12,17 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [smoothMousePos, setSmoothMousePos] = useState({ x: 0, y: 0 });
+  const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
+  const rippleIdRef = useRef(0);
 
-  // Smooth mouse tracking with momentum (cursorMomentum: 0.14)
+  // Smooth mouse tracking with momentum
   useEffect(() => {
     const animate = () => {
       setSmoothMousePos(prev => ({
-        x: prev.x + (mousePos.x - prev.x) * 0.14,
-        y: prev.y + (mousePos.y - prev.y) * 0.14,
+        x: prev.x + (mousePos.x - prev.x) * 0.08,
+        y: prev.y + (mousePos.y - prev.y) * 0.08,
       }));
       rafRef.current = requestAnimationFrame(animate);
     };
@@ -30,7 +32,7 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
     };
   }, [mousePos]);
 
-  // Track mouse for cursor displacement effect
+  // Track mouse for liquid displacement effect
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       if (containerRef.current) {
@@ -38,6 +40,21 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
         const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
         const y = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
         setMousePos({ x, y });
+
+        // Add ripple effect on movement
+        if (Math.random() > 0.85) {
+          const newRipple = {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+            id: rippleIdRef.current++,
+          };
+          setRipples(prev => [...prev.slice(-5), newRipple]);
+          
+          // Remove ripple after animation
+          setTimeout(() => {
+            setRipples(prev => prev.filter(r => r.id !== newRipple.id));
+          }, 1500);
+        }
       }
     };
     window.addEventListener("mousemove", handleMouseMove);
@@ -60,7 +77,6 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
       ? (currentIndex + 1) % images.length 
       : (currentIndex - 1 + images.length) % images.length;
 
-    // Transition timing matching rgbKineticSlider (1s duration)
     setTimeout(() => {
       setCurrentIndex(nextIndex);
       setTimeout(() => {
@@ -71,28 +87,57 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
 
   const currentText = texts[currentIndex] || ["", ""];
 
-  // Cursor displacement intensity (cursorScaleIntensity: 0.65)
-  const cursorIntensity = 0.65;
-  const displacementX = smoothMousePos.x * 50 * cursorIntensity;
-  const displacementY = smoothMousePos.y * 50 * cursorIntensity;
+  // Liquid distortion intensity
+  const liquidX = smoothMousePos.x * 60;
+  const liquidY = smoothMousePos.y * 60;
 
   return (
     <div 
       ref={containerRef}
-      className="relative w-full h-screen overflow-hidden bg-black cursor-none"
+      className="relative w-full h-screen overflow-hidden bg-black"
+      style={{ cursor: "none" }}
     >
-      {/* Custom Cursor */}
+      {/* Custom Liquid Cursor */}
       <div 
-        className="fixed w-20 h-20 rounded-full border border-white/30 pointer-events-none z-50 mix-blend-difference"
+        className="fixed pointer-events-none z-50"
         style={{
-          left: `calc(50% + ${mousePos.x * 50}vw - 40px)`,
-          top: `calc(50% + ${mousePos.y * 50}vh - 40px)`,
-          transform: `scale(${isTransitioning ? 1.5 : 1})`,
-          transition: "transform 0.3s ease-out",
+          left: `calc(50% + ${mousePos.x * 50}vw)`,
+          top: `calc(50% + ${mousePos.y * 50}vh)`,
+          transform: "translate(-50%, -50%)",
         }}
-      />
+      >
+        <div 
+          className="w-8 h-8 rounded-full border-2 border-white/50 mix-blend-difference"
+          style={{
+            transform: `scale(${isTransitioning ? 2 : 1})`,
+            transition: "transform 0.3s ease-out",
+          }}
+        />
+        <div 
+          className="absolute top-1/2 left-1/2 w-20 h-20 rounded-full bg-white/10 blur-xl -translate-x-1/2 -translate-y-1/2"
+          style={{
+            transform: `translate(-50%, -50%) scale(${1 + Math.abs(smoothMousePos.x) + Math.abs(smoothMousePos.y)})`,
+          }}
+        />
+      </div>
 
-      {/* Background Images with Kinetic Effect */}
+      {/* Ripple Effects */}
+      {ripples.map((ripple) => (
+        <div
+          key={ripple.id}
+          className="absolute pointer-events-none animate-ripple"
+          style={{
+            left: ripple.x,
+            top: ripple.y,
+            width: 0,
+            height: 0,
+          }}
+        >
+          <div className="absolute -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full border border-white/20 animate-ping" />
+        </div>
+      ))}
+
+      {/* Background Images with Liquid Effect */}
       <div className="absolute inset-0">
         {images.map((src, index) => (
           <div
@@ -100,49 +145,52 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
             className="absolute inset-0"
             style={{
               opacity: index === currentIndex ? 1 : 0,
-              transform: `scale(${index === currentIndex ? (isTransitioning ? 1.3 : 1) : 1.2})`,
+              transform: `scale(${index === currentIndex ? (isTransitioning ? 1.15 : 1) : 1.1})`,
               filter: isTransitioning 
-                ? "blur(30px) saturate(1.8)" 
-                : "blur(0px) saturate(1)",
+                ? "blur(25px) saturate(1.5) brightness(1.1)" 
+                : "blur(0px) saturate(1) brightness(1)",
               transition: "all 1s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
           >
-            {/* Image with mouse displacement */}
+            {/* Image with liquid distortion */}
             <div
               className="w-full h-full bg-cover bg-center"
               style={{
                 backgroundImage: `url(${src})`,
                 transform: `
-                  translate(${displacementX}px, ${displacementY}px) 
-                  scale(1.15)
+                  translate(${liquidX}px, ${liquidY}px) 
+                  scale(1.2)
+                  skewX(${smoothMousePos.x * 2}deg)
+                  skewY(${smoothMousePos.y * 1}deg)
                 `,
-                transition: "transform 0.1s ease-out",
+                transition: "transform 0.15s ease-out",
+                filter: `url(#liquid-filter)`,
               }}
             />
           </div>
         ))}
         
-        {/* RGB Split Effect during transition */}
+        {/* Liquid RGB Split during transition */}
         {isTransitioning && (
           <>
             <div 
-              className="absolute inset-0 mix-blend-screen opacity-40 pointer-events-none"
+              className="absolute inset-0 mix-blend-screen opacity-50 pointer-events-none"
               style={{
                 backgroundImage: `url(${images[currentIndex]})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                transform: "translateX(-8px) scale(1.15)",
-                filter: "blur(5px) hue-rotate(120deg) saturate(2)",
+                transform: `translateX(-15px) scale(1.2) skewX(3deg)`,
+                filter: "blur(8px) hue-rotate(120deg) saturate(2)",
               }}
             />
             <div 
-              className="absolute inset-0 mix-blend-screen opacity-40 pointer-events-none"
+              className="absolute inset-0 mix-blend-screen opacity-50 pointer-events-none"
               style={{
                 backgroundImage: `url(${images[currentIndex]})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
-                transform: "translateX(8px) scale(1.15)",
-                filter: "blur(5px) hue-rotate(-120deg) saturate(2)",
+                transform: `translateX(15px) scale(1.2) skewX(-3deg)`,
+                filter: "blur(8px) hue-rotate(-120deg) saturate(2)",
               }}
             />
           </>
@@ -152,42 +200,66 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* Text Overlay with Tilt Effect (textsTiltEffect: true) */}
+      {/* SVG Filter for Liquid Effect */}
+      <svg className="absolute w-0 h-0">
+        <defs>
+          <filter id="liquid-filter">
+            <feTurbulence 
+              type="fractalNoise" 
+              baseFrequency={0.01} 
+              numOctaves={3} 
+              result="noise"
+            />
+            <feDisplacementMap 
+              in="SourceGraphic" 
+              in2="noise" 
+              scale={isTransitioning ? 50 : 10 + Math.abs(smoothMousePos.x * 20) + Math.abs(smoothMousePos.y * 20)} 
+              xChannelSelector="R" 
+              yChannelSelector="G"
+            />
+          </filter>
+        </defs>
+      </svg>
+
+      {/* Text Overlay with Liquid Tilt */}
       <div 
         className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center"
         style={{
           transform: `
             perspective(1000px) 
-            rotateY(${smoothMousePos.x * 5}deg) 
-            rotateX(${-smoothMousePos.y * 5}deg)
-            translateX(${displacementX * 0.3}px)
-            translateY(${displacementY * 0.3}px)
+            rotateY(${smoothMousePos.x * 8}deg) 
+            rotateX(${-smoothMousePos.y * 8}deg)
+            translateX(${liquidX * 0.2}px)
+            translateY(${liquidY * 0.2}px)
           `,
         }}
       >
         <div className="text-center overflow-hidden">
-          {/* Title with RGB effect (textsRgbEffect: true, textsRgbIntensity: 0.03) */}
           <h1 
-            className={`text-[125px] md:text-[180px] font-bold tracking-[3px] text-white transition-all duration-500 ${
-              isTransitioning ? "opacity-0 translate-y-24 blur-md scale-95" : "opacity-100 translate-y-0 blur-0 scale-100"
+            className={`text-[120px] md:text-[180px] font-bold tracking-[3px] text-white transition-all duration-700 ${
+              isTransitioning ? "opacity-0 translate-y-32 blur-lg scale-90" : "opacity-100 translate-y-0 blur-0 scale-100"
             }`}
             style={{
               fontFamily: "'Playfair Display', serif",
               textShadow: `
-                ${smoothMousePos.x * 3}px 0 rgba(255,0,0,0.03), 
-                ${-smoothMousePos.x * 3}px 0 rgba(0,255,255,0.03)
+                ${smoothMousePos.x * 5}px ${smoothMousePos.y * 3}px 0 rgba(255,0,100,0.3), 
+                ${-smoothMousePos.x * 5}px ${-smoothMousePos.y * 3}px 0 rgba(0,200,255,0.3)
               `,
+              transform: `skewX(${smoothMousePos.x * 1}deg)`,
             }}
           >
             {currentText[0]}
           </h1>
-          {/* Subtitle */}
           <p 
-            className={`text-[21px] md:text-[28px] mt-[90px] font-light text-white/80 tracking-[2px] transition-all duration-500 delay-100 ${
-              isTransitioning ? "opacity-0 translate-y-12" : "opacity-100 translate-y-0"
+            className={`text-[21px] md:text-[28px] mt-[90px] font-light text-white/80 tracking-[2px] transition-all duration-700 delay-100 ${
+              isTransitioning ? "opacity-0 translate-y-16" : "opacity-100 translate-y-0"
             }`}
             style={{
               fontFamily: "'Roboto', sans-serif",
+              textShadow: `
+                ${smoothMousePos.x * 2}px 0 rgba(255,100,100,0.2), 
+                ${-smoothMousePos.x * 2}px 0 rgba(100,200,255,0.2)
+              `,
             }}
           >
             {currentText[1]}
@@ -195,7 +267,7 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
         </div>
       </div>
 
-      {/* Navigation - matching rgbKineticSlider style */}
+      {/* Navigation */}
       <nav className="absolute z-20 top-1/2 w-full flex justify-between px-[10vw] -translate-y-1/2 pointer-events-none">
         <button 
           onClick={() => handleTransition("prev")}
@@ -220,6 +292,23 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
       <div className="absolute bottom-12 left-12 z-20 text-sm text-white/50">
         Swipe left... or right
       </div>
+
+      {/* Add CSS for ripple animation */}
+      <style jsx>{`
+        @keyframes ripple {
+          0% {
+            transform: scale(0);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(4);
+            opacity: 0;
+          }
+        }
+        .animate-ripple > div {
+          animation: ripple 1.5s ease-out forwards;
+        }
+      `}</style>
     </div>
   );
 }
