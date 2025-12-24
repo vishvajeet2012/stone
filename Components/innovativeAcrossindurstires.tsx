@@ -142,7 +142,7 @@ export default function InnovativeAcrossIndustries() {
   return (
     <div className="w-full bg-warm-cream pb-24">
       <div className="max-w-7xl mx-auto pt-20 px-4 md:px-8">
-         <h2 className="text-3xl md:text-5xl font-serif font-bold text-saddle-brown mb-4 tracking-tight">
+         <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown mb-4 tracking-tight">
              Innovative Across Industries
          </h2>
          <p className="text-modern-earthy text-lg max-w-2xl font-sans">
