@@ -11,23 +11,7 @@ interface KineticSliderProps {
 export default function KineticSlider({ images, texts }: KineticSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Track mouse position for circular cursor
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (containerRef.current) {
-        const rect = containerRef.current.getBoundingClientRect();
-        setCursorPos({
-          x: e.clientX - rect.left,
-          y: e.clientY - rect.top,
-        });
-      }
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
 
   // Preload images
   useEffect(() => {
@@ -59,25 +43,7 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
     <div 
       ref={containerRef}
       className="relative w-full h-screen overflow-hidden bg-black"
-      style={{ cursor: "none" }}
     >
-      {/* Circular Cursor */}
-      <div 
-        className="fixed pointer-events-none z-50"
-        style={{
-          left: cursorPos.x,
-          top: cursorPos.y,
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        <div 
-          className="w-10 h-10 rounded-full border-2 border-white mix-blend-difference"
-          style={{
-            transform: `scale(${isTransitioning ? 1.5 : 1})`,
-            transition: "transform 0.3s ease-out",
-          }}
-        />
-      </div>
 
       {/* Background Images */}
       <div className="absolute inset-0">
@@ -134,12 +100,13 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/60" />
       </div>
 
-      {/* Text Overlay */}
+      {/* Text Overlay with Glitch Effect */}
       <div className="absolute inset-0 pointer-events-none z-10 flex flex-col items-center justify-center">
-        <div className="text-center overflow-hidden">
+        <div className="text-center overflow-hidden relative">
+          {/* Main Title */}
           <h1 
-            className={`text-[120px] md:text-[180px] font-bold tracking-[3px] text-white transition-all duration-700 ${
-              isTransitioning ? "opacity-0 translate-y-32 blur-lg scale-90" : "opacity-100 translate-y-0 blur-0 scale-100"
+            className={`text-[80px] md:text-[180px] font-bold tracking-[3px] text-white transition-all duration-500 ${
+              isTransitioning ? "animate-glitch" : ""
             }`}
             style={{
               fontFamily: "'Playfair Display', serif",
@@ -147,9 +114,37 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
           >
             {currentText[0]}
           </h1>
+          
+          {/* Glitch layers - visible during transition */}
+          {isTransitioning && (
+            <>
+              <h1 
+                className="absolute top-0 left-0 right-0 text-[80px] md:text-[180px] font-bold tracking-[3px] animate-glitch-1"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  color: "rgba(255, 0, 100, 0.8)",
+                  clipPath: "inset(0 0 50% 0)",
+                }}
+              >
+                {currentText[0]}
+              </h1>
+              <h1 
+                className="absolute top-0 left-0 right-0 text-[80px] md:text-[180px] font-bold tracking-[3px] animate-glitch-2"
+                style={{
+                  fontFamily: "'Playfair Display', serif",
+                  color: "rgba(0, 200, 255, 0.8)",
+                  clipPath: "inset(50% 0 0 0)",
+                }}
+              >
+                {currentText[0]}
+              </h1>
+            </>
+          )}
+          
+          {/* Subtitle */}
           <p 
-            className={`text-[21px] md:text-[28px] mt-[90px] font-light text-white/80 tracking-[2px] transition-all duration-700 delay-100 ${
-              isTransitioning ? "opacity-0 translate-y-16" : "opacity-100 translate-y-0"
+            className={`text-[21px] md:text-[28px] mt-[60px] md:mt-[90px] font-light text-white/80 tracking-[2px] transition-all duration-500 delay-100 ${
+              isTransitioning ? "opacity-0 translate-y-8 blur-sm" : "opacity-100 translate-y-0 blur-0"
             }`}
             style={{
               fontFamily: "'Roboto', sans-serif",
@@ -159,6 +154,95 @@ export default function KineticSlider({ images, texts }: KineticSliderProps) {
           </p>
         </div>
       </div>
+
+      {/* Glitch CSS Animation */}
+      <style jsx>{`
+        @keyframes glitch {
+          0%, 100% {
+            transform: translate(0);
+            opacity: 1;
+          }
+          10% {
+            transform: translate(-5px, 2px);
+          }
+          20% {
+            transform: translate(5px, -2px);
+          }
+          30% {
+            transform: translate(-3px, 1px);
+            opacity: 0.8;
+          }
+          40% {
+            transform: translate(3px, -1px);
+          }
+          50% {
+            transform: translate(-2px, 2px);
+            opacity: 0.9;
+          }
+          60% {
+            transform: translate(2px, -2px);
+          }
+          70% {
+            transform: translate(-4px, 1px);
+            opacity: 0.7;
+          }
+          80% {
+            transform: translate(4px, 0);
+          }
+          90% {
+            transform: translate(0, -2px);
+            opacity: 0.85;
+          }
+        }
+        
+        @keyframes glitch-1 {
+          0%, 100% {
+            transform: translate(0);
+          }
+          20% {
+            transform: translate(-8px, 0);
+          }
+          40% {
+            transform: translate(8px, 0);
+          }
+          60% {
+            transform: translate(-4px, 0);
+          }
+          80% {
+            transform: translate(4px, 0);
+          }
+        }
+        
+        @keyframes glitch-2 {
+          0%, 100% {
+            transform: translate(0);
+          }
+          20% {
+            transform: translate(8px, 0);
+          }
+          40% {
+            transform: translate(-8px, 0);
+          }
+          60% {
+            transform: translate(4px, 0);
+          }
+          80% {
+            transform: translate(-4px, 0);
+          }
+        }
+        
+        .animate-glitch {
+          animation: glitch 0.5s ease-in-out;
+        }
+        
+        .animate-glitch-1 {
+          animation: glitch-1 0.3s ease-in-out infinite;
+        }
+        
+        .animate-glitch-2 {
+          animation: glitch-2 0.3s ease-in-out infinite;
+        }
+      `}</style>
 
       {/* Navigation with Lucide Icons */}
       <nav className="absolute z-20 top-1/2 w-full flex justify-between px-[5vw] md:px-[10vw] -translate-y-1/2 pointer-events-none">
