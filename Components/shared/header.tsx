@@ -1,13 +1,14 @@
 'use client'
 import { Search, Camera, ShoppingCart, Heart, Globe } from "lucide-react";
 import MobileNav from "@/Components/shared/MobileNav";
+import AnnouncementHomepage from "@/Components/shared/annoucmentHomepage";
 
 export default function Header() {
 
   return (
     <nav className="w-full bg-warm-cream">
-      {/* Top Brown Bar */}
-      <div className="w-full h-2 bg-saddle-brown"></div>
+      {/* Announcement Bar */}
+      <AnnouncementHomepage />
 
       {/* Main Header Area */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col gap-6">
