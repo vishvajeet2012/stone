@@ -33,13 +33,13 @@ export default function ManufacturingInfrastructure() {
            transition={{ duration: 0.6 }}
            className="text-center mb-16"
         >
-          <span className="text-sm font-bold uppercase tracking-widest text-modern-earthy/60 mb-3 block">
+          <span className="text-sm font-bold uppercase tracking-widest text-modern-earthy mb-3 block">
             Our Backbone
           </span>
           <h2 className="text-4xl md:text-5xl font-serif font-bold mb-6 tracking-tight">
             Manufacturing & Infrastructure
           </h2>
-          <p className="max-w-2xl mx-auto text-lg text-modern-earthy/80 font-sans leading-relaxed">
+          <p className="max-w-2xl mx-auto text-lg text-modern-earthy font-sans leading-relaxed">
             Combining traditional craftsmanship with cutting-edge technology to deliver excellence at scale.
           </p>
         </motion.div>
@@ -70,7 +70,7 @@ export default function ManufacturingInfrastructure() {
                 <h3 className="text-2xl font-serif font-bold text-warm-cream mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-warm-cream/90 font-sans leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 transform translate-y-4 group-hover:translate-y-0">
+                <p className="text-warm-cream font-sans leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 transform translate-y-4 group-hover:translate-y-0">
                   {feature.description}
                 </p>
               </div>
