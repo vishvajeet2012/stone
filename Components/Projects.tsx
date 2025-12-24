@@ -7,7 +7,7 @@ import "swiper/css";
 import "swiper/css/effect-creative";
 import "swiper/css/pagination";
 import "swiper/css/autoplay";
-
+import imageParrot from "../public/Peacock-Pietra.webp"
 import { cn } from "@/lib/utils";
 
 const Projects = () => {
@@ -47,6 +47,11 @@ const Projects = () => {
       src: "https://images.unsplash.com/photo-1521747116042-5a810fda9664?auto=format&fit=crop&q=80&w=600",
       alt: "Sandstone Texture",
       code: "Sandstone",
+    },
+     {
+      src: imageParrot.src,
+      alt: "Slate Natural",
+      code: "Slate",
     },
   ];
 
@@ -100,14 +105,14 @@ const HoverExpandHorizontal = ({
         transition={{ duration: 0.3 }}
         className="w-full"
       >
-        <div className="flex w-full items-center justify-center gap-2" onMouseLeave={() => setActiveImage(null)}>
+        <div className="flex w-full items-center justify-center gap-4" onMouseLeave={() => setActiveImage(null)}>
           {images.map((image, index) => (
             <motion.div
               key={index}
               className="relative cursor-pointer overflow-hidden rounded-3xl"
-              initial={{ width: "5rem", height: "24rem" }}
+              initial={{ width: "8rem", height: "24rem" }}
               animate={{
-                width: activeImage === index ? "30rem" : "5rem", // Open: 30rem, Closed: 5rem
+                width: activeImage === index ? "30rem" : "8rem", // Open: 30rem, Closed: 8rem
                 height: "24rem",
               }}
               transition={{ duration: 0.4, ease: "easeInOut" }} // Smoother transition
