@@ -9,12 +9,13 @@ import Testimonials from "@/Components/Testimonials";
 import Certificates from "@/Components/Certificates";
 import ContactUs from "@/Components/ContactUs";
 import Image from "next/image";
+import DeconstructedGalleryHero from "@/Components/distrocaiotn";
 
 export default function Home() {
   return (
     <main className=" w-full bg-warm-cream  overflow-hidden">
       <Hero/>
-   
+   <DeconstructedGalleryHero/>
       <AnnouncementHomepage />
 
       <TopCategory/>
