@@ -10,12 +10,14 @@ import Certificates from "@/Components/Certificates";
 import ContactUs from "@/Components/ContactUs";
 import Image from "next/image";
 import DeconstructedGalleryHero from "@/Components/distrocaiotn";
+import RawToRefinedHero from "@/Components/RawToRefinedHero";
 
 export default function Home() {
   return (
     <main className=" w-full bg-warm-cream  overflow-hidden">
       <Hero/>
-   <DeconstructedGalleryHero/>
+      <DeconstructedGalleryHero/>
+      <RawToRefinedHero/>
       <AnnouncementHomepage />
 
       <TopCategory/>
