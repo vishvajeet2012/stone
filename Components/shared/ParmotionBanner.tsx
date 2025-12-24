@@ -19,6 +19,18 @@ export default function PromotionBanner() {
                     playsInline
                     className="w-full h-full object-cover"
                 />
+                
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                    <div className="text-center">
+                        <h2 className="text-3xl md:text-5xl font-serif font-bold text-warm-cream mb-8 drop-shadow-lg tracking-tight">
+                            Natural Stone
+                        </h2>
+                        <button className="bg-warm-cream text-saddle-brown px-8 py-3 rounded-full font-sans font-bold uppercase tracking-widest text-xs md:text-sm hover:bg-white transition-all duration-300 shadow-xl hover:scale-105 transform">
+                            Shop Collection
+                        </button>
+                    </div>
+                </div>
 
             </div>
         </div>
