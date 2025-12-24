@@ -1,9 +1,8 @@
 'use client'
-import { Search, Camera, ShoppingCart, Heart, Globe, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Search, Camera, ShoppingCart, Heart, Globe } from "lucide-react";
+import MobileNav from "@/Components/shared/MobileNav";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <nav className="w-full bg-warm-cream">
@@ -15,12 +14,12 @@ export default function Header() {
    
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
            
           </div>
 
       
-          <div className="flex-grow max-w-2xl w-full">
+          <div className="grow max-w-2xl w-full">
             <div className="relative group">
               <input
                 type="text"
@@ -52,10 +51,7 @@ export default function Header() {
             </a>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button className="lg:hidden text-saddle-brown" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
-          </button>
+              
         </div>
 
      
@@ -75,25 +71,10 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div className="lg:hidden bg-warm-cream border-t border-saddle-brown/10 p-4 animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className="flex flex-col gap-4 text-saddle-brown font-semibold uppercase text-sm">
-            {["Products", ].map((link) => (
-              <a key={link} href="#" className="py-2 border-b border-saddle-brown/5 hover:bg-saddle-brown/5 px-2 rounded transition-all">
-                {link}
-              </a>
-            ))}
-            <div className="flex items-center justify-between pt-4 text-modern-earthy">
-              <div className="flex gap-4">
-                <ShoppingCart className="w-6 h-6" />
-                <Heart className="w-6 h-6" />
-              </div>
-             
-            </div>
-          </div>
-        </div>
-      )}
+
+      
+      {/* Fixed Mobile Navigation Bar */}
+      <MobileNav />
     </nav>
   );
 }

@@ -8,7 +8,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 // Placeholder data for stone categories if props aren't provided immediately
-const fallbackCategories = [
+export const fallbackCategories = [
   {
     _id: "1",
     subcategories: [
