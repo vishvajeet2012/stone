@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <main className=" w-full bg-warm-cream  overflow-hidden">
       <Hero/>
-      <DeconstructedGalleryHero/>
+      {/* <DeconstructedGalleryHero/> */}
       <AnnouncementHomepage />
 
       <TopCategory/>
