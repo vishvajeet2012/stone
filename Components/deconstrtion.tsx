@@ -1,98 +1,73 @@
 "use client";
 
-import { useRef, useEffect, Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useTexture, PerspectiveCamera } from "@react-three/drei";
+import { Canvas, useFrame, useThree, RootState } from "@react-three/fiber";
+import { useScroll, ScrollControls, useTexture } from "@react-three/drei";
+import { useRef, Suspense } from "react";
 import * as THREE from "three";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger);
+function FloatingSlab({ pos, rot }: { pos: [number, number, number]; rot: [number, number, number] }) {
+  const ref = useRef<THREE.Mesh>(null!);
+  const marbleTex = useTexture("/earth.png"); // Using existing texture
 
-function FloatingSlab({ position, rotation }: { position: [number, number, number]; rotation: [number, number, number] }) {
-  const meshRef = useRef<THREE.Mesh>(null!);
-  const marbleTexture = useTexture("/earth.png");
-
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.x += 0.01;
-      meshRef.current.rotation.y += 0.005;
-      meshRef.current.position.y += Math.sin(state.clock.getElapsedTime() + position[0]) * 0.001;
+  useFrame((state: RootState) => {
+    if (ref.current) {
+      ref.current.rotation.x += 0.01;
+      ref.current.rotation.y += 0.005;
+      ref.current.position.y += Math.sin(state.clock.getElapsedTime() + pos[0]) * 0.001;
     }
   });
 
   return (
-    <mesh ref={meshRef} position={position} rotation={rotation}>
+    <mesh ref={ref} position={pos} rotation={rot}>
       <boxGeometry args={[1, 0.2, 2]} />
-      <meshStandardMaterial map={marbleTexture} roughness={0.2} metalness={0.8} />
+      <meshStandardMaterial map={marbleTex} roughness={0.2} metalness={0.8} />
     </mesh>
   );
 }
 
-function Scene() {
-  const cameraRef = useRef<THREE.PerspectiveCamera>(null!);
-  const cursor = useRef({ x: 0, y: 0 });
-  const cameraPos = useRef({ x: 0, y: 0, z: 5 });
-
+function CameraRig() {
+  const scroll = useScroll();
+  const { camera } = useThree();
+  
   useFrame(() => {
-    if (cameraRef.current) {
-      cameraPos.current.x += (cursor.current.x * 0.5 - cameraPos.current.x) * 0.05;
-      cameraPos.current.y += (cursor.current.y * 0.5 - cameraPos.current.y) * 0.05;
-      
-      cameraRef.current.position.set(
-        cameraPos.current.x,
-        cameraPos.current.y,
-        cameraPos.current.z
-      );
-    }
+    // Move camera forward through tunnel on scroll
+    camera.position.z = 5 - scroll.offset * 20;
+    camera.position.y = Math.sin(scroll.offset * Math.PI * 2) * 0.5;
   });
+  
+  return null;
+}
 
-  useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.to(cameraPos.current, {
-        scrollTrigger: {
-          trigger: ".hero-gallery",
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-        z: -20,
-        ease: "power2.inOut"
-      });
-    });
-
-    const handleMouse = (e: MouseEvent) => {
-      cursor.current.x = (e.clientX / window.innerWidth) * 2 - 1;
-      cursor.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
-    };
-    window.addEventListener("mousemove", handleMouse);
-    
-    return () => {
-      ctx.revert();
-      window.removeEventListener("mousemove", handleMouse);
-    };
-  }, []);
-
+function Scene() {
   return (
     <>
-      <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 5]} />
+      <color attach="background" args={["#000"]} />
       <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 10]} />
-      <FloatingSlab position={[-3, 0, -5]} rotation={[0, 0, 0]} />
-      <FloatingSlab position={[3, 2, -8]} rotation={[0.2, 0.1, 0]} />
-      <FloatingSlab position={[0, -2, -10]} rotation={[-0.1, 0.2, 0]} />
+      <directionalLight position={[5, 5, 5]} intensity={1.5} />
+      <CameraRig />
+      {/* Floating slabs in tunnel */}
+      <FloatingSlab pos={[-3, 0, -5]} rot={[0, 0, 0]} />
+      <FloatingSlab pos={[3, 2, -8]} rot={[0.2, 0.1, 0]} />
+      <FloatingSlab pos={[0, -2, -10]} rot={[-0.1, 0.2, 0]} />
+      <FloatingSlab pos={[2, 1, -15]} rot={[0, -0.1, 0]} />
+      <FloatingSlab pos={[-2, -1, -20]} rot={[0.1, 0.2, 0]} />
+      <FloatingSlab pos={[0, 2, -25]} rot={[-0.2, 0, 0.1]} />
     </>
   );
 }
 
-export default function DeconstructedGalleryHero() {
+export default function GalleryHero() {
   return (
-    <div className="hero-gallery h-screen relative">
-      <Canvas>
-        <Suspense fallback={null}>
-          <Scene />
-        </Suspense>
-      </Canvas>
+    <div className="h-[500vh]">
+      <div className="sticky top-0 h-screen">
+        <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
+          <Suspense fallback={null}>
+            <ScrollControls pages={5} damping={0.25}>
+              <Scene />
+            </ScrollControls>
+          </Suspense>
+        </Canvas>
+      </div>
     </div>
   );
 }
