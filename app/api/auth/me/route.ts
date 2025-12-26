@@ -7,20 +7,19 @@ export async function GET(req: NextRequest) {
   try {
     await dbConnect();
 
-    // Get token from Authorization header
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+
+    const token = req.cookies.get("auth_token")?.value;
+
+    if (!token) {
       return NextResponse.json({ message: "Unauthorized: No token provided" }, { status: 401 });
     }
 
-    const token = authHeader.split(" ")[1];
-
     try {
-      // Verify Token
+
       const decoded: any = jwt.verify(token, process.env.JWT_SECRET || "secret");
 
-      // Find user
-      const user = await LamsourAdmin.findById(decoded.id).select("-password"); // Exclude password
+
+      const user = await LamsourAdmin.findById(decoded.id).select("-password"); 
       
       if (!user) {
         return NextResponse.json({ message: "User not found" }, { status: 404 });

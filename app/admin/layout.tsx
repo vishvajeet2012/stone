@@ -28,7 +28,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`${playfair.variable} ${lato.variable} font-lato antialiased min-h-screen bg-[#121212] text-white selection:bg-saddle-brown selection:text-white`}>
+    <div className={`${playfair.variable} ${lato.variable} font-lato antialiased min-h-screen bg-warm-cream text-modern-earthy selection:bg-saddle-brown selection:text-white`}>
         {/* Main Content Area */}
         <main className="min-h-screen pb-32"> {/* Pattern background with padding for dock */}
             <div className="absolute inset-0 z-0 opacity-20 pointer-events-none" 

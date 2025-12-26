@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Lato, Cinzel, Montserrat } from "next/font/google";
 import "./globals.css";
-import Header from "@/Components/shared/header";
-import Footer from "@/Components/shared/footer";
+import LayoutWrapper from "@/Components/shared/LayoutWrapper";
 import { Toaster } from "@/Components/ui/sonner";
 
 const playfair = Playfair_Display({
@@ -45,10 +44,10 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${lato.variable} ${cinzel.variable} ${montserrat.variable} font-lato antialiased`}
       >
-        <Header/>
-        {children}
+        <LayoutWrapper>
+          {children}
+        </LayoutWrapper>
         <Toaster />
-        <Footer/>
       </body>
     </html>
   );

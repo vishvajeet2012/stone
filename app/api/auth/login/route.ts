@@ -32,16 +32,24 @@ export async function POST(req: NextRequest) {
             { expiresIn: "1d" }
         );
 
-        return NextResponse.json({ 
+        const response = NextResponse.json({ 
             message: "Login successful", 
-            token,
             user: {
                 id: user._id,
                 fullName: user.fullName,
                 email: user.email,
                 isAdmin: user.isAdmin
             }
-        }, { status: 200 })
+        }, { status: 200 });
+
+        response.cookies.set("auth_token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 86400 // 1 day
+        });
+
+        return response;
 
     } catch (error) {
         return NextResponse.json({ message: "Internal server error" }, { status: 500 })

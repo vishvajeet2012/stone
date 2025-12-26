@@ -6,30 +6,36 @@ import { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
-// App Icons (Using standard logos or placeholders if originals strictly required)
-// Since user provided specific URLs, we'll try to use them or better yet, Lucide icons for a cleaner, self-contained implementation if they fail,
-// but let's stick to the visual style requested.
-// To ensure reliability, I will use Lucide icons for the "Admin" context but styled to look like the dock apps.
-// OR, if the user specifically wanted THOSE apps, I'd use them.
-// Given "Admin Panel", standard apps like "Notion/Asana" might be placeholders.
-// Let's implement a generic "Admin Dock" with Lucide icons representing admin features (Dashboard, Users, Products, Analytics, Settings, etc.)
-// wrapped in the same interaction model.
 
 import {
   LayoutDashboard,
   Users,
   Package,
   BarChart3,
-  Settings,
-  FileText,
   Mail,
   LogOut,
-  Palette
+  Palette,
+  User,
+  FileText
 } from "lucide-react";
+import api from "@/lib/axios";
 
 export default function AdminDock() {
   const mouseX = useMotionValue(Infinity);
   const pathname = usePathname();
+
+  if (pathname === "/admin/login" || pathname === "/admin/signup") {
+    return null;
+  }
+
+  const handleLogout = async () => {
+    try {
+        await api.post("/auth/logout");
+        window.location.href = "/admin/login";
+    } catch (error) {
+        console.error("Logout failed", error);
+    }
+  };
 
   const icons = [
     { title: "Dashboard", icon: LayoutDashboard, href: "/admin" },
@@ -39,7 +45,7 @@ export default function AdminDock() {
     { title: "Blogs", icon: FileText, href: "/admin/blogs" },
     { title: "Inquiries", icon: Mail, href: "/admin/inquiries" },
     { title: "Theme", icon: Palette, href: "/admin/theme" },
-    { title: "Settings", icon: Settings, href: "/admin/settings" },
+    { title: "Profile", icon: User, href: "/admin/profile" }, // Changed to Profile
   ];
 
   return (
@@ -65,9 +71,11 @@ export default function AdminDock() {
       {/* Separator */}
       <div className="w-[1px] h-10 bg-white/20 mx-1" />
 
-       <DockIcon mouseX={mouseX} title="Logout" href="/auth/login" isActive={false}>
-            <LogOut className="w-full h-full text-red-400" />
-       </DockIcon>
+       <div onClick={handleLogout}> {/* Wrap in div for click handler, keep DockIcon styling if possible, but DockIcon uses Link. Let's make DockIcon accept onClick or handle it here. */}
+           <DockIcon mouseX={mouseX} title="Logout" href="#" isActive={false}>
+                <LogOut className="w-full h-full text-red-400" />
+           </DockIcon>
+       </div>
 
     </div>
   );

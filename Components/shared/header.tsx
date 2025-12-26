@@ -24,11 +24,47 @@ const megaMenuData = [
     ]
   },
   {
+    id: "exotic-colors",
+    label: "Exotic Colors",
+    columns: [
+       {
+         title: "Explore by",
+         items: [
+           { label: "Stones by Color", href: "/category/exotic-colors/by-color" }, 
+           { label: "Stones by Application", href: "/category/exotic-colors/by-application" }
+         ]
+       }
+    ]
+  },
+  {
+    id: "artisan-excellence",
+    label: "Artisan Excellence & Services",
+    columns: [
+       {
+         title: "Craftsmanship",
+         items: [
+           { label: "Stone Article", href: "/services/stone-article" }, 
+           { label: "Designer Stone Elevation work", href: "/services/stone-elevation" }, 
+           { label: "Heritage Stone Construction work", href: "/services/heritage-construction" }, 
+           { label: "Onyx & Agate Furniture", href: "/services/onyx-agate-furniture" }
+         ]
+       },
+       {
+         title: "Architectural Elements",
+         items: [
+           { label: "Sandstone carving gates", href: "/services/carving-gates" }, 
+           { label: "Sandstone Shikhar & Domes", href: "/services/shikhar-domes" }, 
+           { label: "Stone carving boundary wall designs", href: "/services/boundary-walls" }
+         ]
+       }
+    ]
+  },
+  {
     id: "projects",
     label: "Projects",
     columns: [
         { 
-          title: "Our Portfolio", 
+          title: "Featured Works", 
           items: [
             { label: "Residential Projects", href: "/projects/residential" },
             { label: "Commercial Projects", href: "/projects/commercial" },
@@ -108,17 +144,24 @@ export default function Header() {
      
         <div className="hidden lg:flex items-center justify-between border-t border-saddle-brown/10 pt-4 pb-2 relative">
           <div className="flex items-center gap-8 text-[13px] font-bold text-modern-earthy tracking-tight">
-            {["Products", "Projects", "Company", "Inspiration", "Resources", "Contact Us"].map((link) => (
+            {[
+              { label: "Products", id: "products" },
+              { label: "Exotic Colors", id: "exotic-colors" },
+              { label: "Artisan Excellence & Services", id: "artisan-excellence" },
+              { label: "Projects", id: "projects" },
+              { label: "Company", id: "company" },
+              { label: "Contact Us", id: "contact" }
+            ].map((link) => (
               <Link 
-                key={link} 
-                href={link === "Projects" ? "/projects/residential" : "#"} // Default link logic can be improved
+                key={link.id} 
+                href={link.id === "projects" ? "/projects/residential" : "#"} // Default link logic can be improved
                 className={cn(
                   "hover:text-saddle-brown uppercase transition-colors py-2 relative",
-                  activeCategory === link.toLowerCase() && isMegaMenuOpen && "text-saddle-brown after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-saddle-brown"
+                  activeCategory === link.id && isMegaMenuOpen && "text-saddle-brown after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-saddle-brown"
                 )}
-                onMouseEnter={() => handleMouseEnter(link)}
+                onMouseEnter={() => handleMouseEnter(link.id)}
               >
-                {link}
+                {link.label}
               </Link>
             ))}
           </div>

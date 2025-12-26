@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
       fullName,
       email,
       password: hashedPassword,
-      isAdmin: false, // Default to false, can be manually updated in DB
+      isAdmin: true, // Auto-approve as admin for this specific use case 
     });
 
     return NextResponse.json(
