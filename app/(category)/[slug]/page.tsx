@@ -12,7 +12,6 @@ export default async function CategoryPage({
 }) {
   const { slug } = await params;
   
-  // Convert slug to readable name
   const categoryName = slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 
   return (
@@ -20,8 +19,8 @@ export default async function CategoryPage({
       <CategoryBanner />
         <CategoryDescription categoryName={categoryName} />
       <div className="space-y-4">
-        <SubCategoryList />
-        <CategoryProducts />
+        {/* <SubCategoryList /> */}
+        <CategoryProducts categorySlug={slug} />
       </div>
     </main>
   );
