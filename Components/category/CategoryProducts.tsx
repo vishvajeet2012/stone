@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Image from "next/image";
@@ -69,10 +69,10 @@ export default function CategoryProducts({ categorySlug = "granite" }: { categor
       {/* Centered Content Container */}
       <div className="relative z-10 2xl:max-w-316 2xl:mx-auto">
         <div className="text-center mb-12">
-          <span className="text-modern-earthy text-xs font-bold tracking-widest uppercase mb-2 block font-sans">
+          <span className="text-modern-earthy text-xs font-bold tracking-widest uppercase mb-2 block font-lato">
             The Collection
           </span>
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-saddle-brown tracking-tight">
             Featured Stones
           </h2>
         </div>
@@ -95,7 +95,7 @@ export default function CategoryProducts({ categorySlug = "granite" }: { categor
               />
             {/* Overlay */}
             <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[1px]">
-                 <span className="bg-warm-cream text-saddle-brown px-6 py-2 rounded-full font-serif font-bold tracking-wide transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-xl flex items-center gap-2 text-sm">
+                 <span className="bg-warm-cream text-saddle-brown px-6 py-2 rounded-full font-playfair font-bold tracking-wide transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 shadow-xl flex items-center gap-2 text-sm">
                    View Details <ArrowRight size={14} />
                  </span>
             </div>
@@ -103,10 +103,10 @@ export default function CategoryProducts({ categorySlug = "granite" }: { categor
 
             {/* Content - Theme Aligned */}
             <div className="text-center px-4">
-              <h3 className="text-2xl font-serif font-bold text-saddle-brown mb-3 group-hover:text-modern-earthy transition-colors duration-300">
+              <h3 className="text-2xl font-playfair font-bold text-saddle-brown mb-3 group-hover:text-modern-earthy transition-colors duration-300">
                 {product.name}
               </h3>
-              <p className="text-stone-600 leading-relaxed mb-4 text-sm md:text-base font-sans line-clamp-2">
+              <p className="text-stone-600 leading-relaxed mb-4 text-sm md:text-base font-lato line-clamp-2">
                 {product.description}
               </p>
               <div className="w-12 h-px bg-saddle-brown/30 mx-auto group-hover:w-24 transition-all duration-300"></div>
@@ -117,8 +117,8 @@ export default function CategoryProducts({ categorySlug = "granite" }: { categor
       
       {/* View All / Theme Button */}
       <div className="mt-16 text-center">
-          <p className="text-modern-earthy/80 italic mb-4 font-serif text-sm">Viewing 6 of 24 premium stones</p>
-          <button className="px-10 py-3 border border-saddle-brown text-saddle-brown rounded-full hover:bg-saddle-brown hover:text-warm-cream transition-all duration-300 uppercase tracking-widest text-xs font-bold font-sans">
+          <p className="text-modern-earthy/80 italic mb-4 font-playfair text-sm">Viewing 6 of 24 premium stones</p>
+          <button className="px-10 py-3 border border-saddle-brown text-saddle-brown rounded-full hover:bg-saddle-brown hover:text-warm-cream transition-all duration-300 uppercase tracking-widest text-xs font-bold font-lato">
               Load More Collection
           </button>
       </div>
@@ -126,3 +126,4 @@ export default function CategoryProducts({ categorySlug = "granite" }: { categor
     </section>
   );
 }
+

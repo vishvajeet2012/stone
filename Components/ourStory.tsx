@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { motion } from "motion/react";
@@ -30,11 +30,11 @@ export default function OurStory() {
             <span className="text-modern-earthy text-xs md:text-sm font-semibold tracking-[0.2em] uppercase mb-4 block">
             The Timeless Art of Stone
             </span>
-            <h2 className="text-4xl md:text-6xl font-serif font-bold text-saddle-brown mb-8">
+            <h2 className="text-4xl md:text-6xl font-playfair font-bold text-saddle-brown mb-8">
            Vintage Dura 
             </h2>
             
-            <div className="space-y-6 text-saddle-brown/80 font-sans text-sm md:text-base leading-relaxed text-justify md:text-center">
+            <div className="space-y-6 text-saddle-brown/80 font-lato text-sm md:text-base leading-relaxed text-justify md:text-center">
                 <p>
                     Experience the timeless beauty of Vintage Dura  at World of Stones.
                 </p>
@@ -50,7 +50,7 @@ export default function OurStory() {
             </div>
 
             <div className="mt-10 pt-6 border-t border-saddle-brown/10 w-full">
-                 <p className="text-saddle-brown font-serif italic text-lg">
+                 <p className="text-saddle-brown font-playfair italic text-lg">
                     World of Stones would be happy to customise this artwork for your design as per your wall size.
                 </p>
             </div>
@@ -71,3 +71,4 @@ export default function OurStory() {
     </section>
   );
 }
+

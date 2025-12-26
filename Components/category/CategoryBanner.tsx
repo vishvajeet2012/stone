@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Slider from "react-slick";
@@ -43,7 +43,7 @@ export default function CategoryBanner() {
             <div className="absolute inset-0 bg-black/30" />
             
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <h1 className="text-3xl md:text-5xl text-warm-cream font-serif font-bold tracking-widest uppercase drop-shadow-lg text-center px-4">
+                <h1 className="text-3xl md:text-5xl text-warm-cream font-playfair font-bold tracking-widest uppercase drop-shadow-lg text-center px-4">
                    Premium Collection
                 </h1>
             </div>
@@ -59,3 +59,4 @@ export default function CategoryBanner() {
     </div>
   );
 }
+

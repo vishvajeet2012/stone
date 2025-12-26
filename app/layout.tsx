@@ -43,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playfair.variable} ${lato.variable} ${cinzel.variable} ${montserrat.variable} font-sans antialiased`}
+        className={`${playfair.variable} ${lato.variable} ${cinzel.variable} ${montserrat.variable} font-lato antialiased`}
       >
         <Header/>
         {children}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -46,7 +46,7 @@ export default function EnquiryModal({ isOpen, onClose, stoneName }: EnquiryModa
                   <span className="text-modern-earthy text-xs font-bold tracking-widest uppercase block mb-1">
                     Enquire About
                   </span>
-                  <h3 className="text-3xl font-serif font-bold text-saddle-brown">
+                  <h3 className="text-3xl font-playfair font-bold text-saddle-brown">
                     {stoneName}
                   </h3>
                 </div>
@@ -95,3 +95,4 @@ export default function EnquiryModal({ isOpen, onClose, stoneName }: EnquiryModa
     </AnimatePresence>
   );
 }
+

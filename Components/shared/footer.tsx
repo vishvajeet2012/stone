@@ -1,11 +1,11 @@
-
+﻿
 
 
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-saddle-brown text-warm-cream pt-24 pb-12 font-sans relative overflow-hidden">
+    <footer className="bg-saddle-brown text-warm-cream pt-24 pb-12 font-lato relative overflow-hidden">
       
       {/* Decorative SVG Pattern Background */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -35,7 +35,7 @@ export default function Footer() {
           <div className="lg:col-span-4 space-y-10 pr-0 lg:pr-12">
             <div>
                  <span className="text-warm-cream/60 text-xs font-bold tracking-widest uppercase mb-2 block">Phone Number</span>
-                 <p className="text-3xl font-serif text-warm-cream tracking-tight hover:text-white transition-colors cursor-pointer">+1 800 551 3247</p>
+                 <p className="text-3xl font-playfair text-warm-cream tracking-tight hover:text-white transition-colors cursor-pointer">+1 800 551 3247</p>
             </div>
             
             <div>
@@ -114,10 +114,11 @@ export default function Footer() {
            </div>
            
            <div className="flex flex-col md:flex-row gap-6 md:gap-12 md:items-center">
-                <p>© {new Date().getFullYear()} Maitrii Stone. Crafted by Nature.</p>
+                <p>Â© {new Date().getFullYear()} Maitrii Stone. Crafted by Nature.</p>
            </div>
         </div>
       </div>
     </footer>
   );
 }
+

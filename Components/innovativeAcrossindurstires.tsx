@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { Timeline } from "@/Components/ui/timeline";
@@ -39,7 +39,7 @@ export default function InnovativeAcrossIndustries() {
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
              <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-4 md:p-6">
-                <h4 className="text-xl md:text-2xl font-serif font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
+                <h4 className="text-xl md:text-2xl font-playfair font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
                     Foundry & Processing
                 </h4>
                 <div className="flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
@@ -61,7 +61,7 @@ export default function InnovativeAcrossIndustries() {
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-4 md:p-6">
-                <h4 className="text-xl md:text-2xl font-serif font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
+                <h4 className="text-xl md:text-2xl font-playfair font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
                     Extraction Environments
                 </h4>
                  <div className="flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
@@ -83,7 +83,7 @@ export default function InnovativeAcrossIndustries() {
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-4 md:p-6">
-                <h4 className="text-xl md:text-2xl font-serif font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
+                <h4 className="text-xl md:text-2xl font-playfair font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
                     Renewable Energy
                 </h4>
                 <div className="flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
@@ -105,7 +105,7 @@ export default function InnovativeAcrossIndustries() {
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
             <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-4 md:p-6">
-                <h4 className="text-xl md:text-2xl font-serif font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
+                <h4 className="text-xl md:text-2xl font-playfair font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
                     Purification Media
                 </h4>
                 <div className="flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
@@ -127,7 +127,7 @@ export default function InnovativeAcrossIndustries() {
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
             />
              <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent flex flex-col justify-end p-4 md:p-6">
-                <h4 className="text-xl md:text-2xl font-serif font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
+                <h4 className="text-xl md:text-2xl font-playfair font-bold text-warm-cream mb-2 translate-y-1 group-hover:translate-y-0 transition-transform duration-500">
                     Versatile Solutions
                 </h4>
                 <div className="flex flex-wrap gap-2 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 delay-100">
@@ -142,10 +142,10 @@ export default function InnovativeAcrossIndustries() {
   return (
     <div className="w-full bg-warm-cream pb-24">
       <div className="max-w-7xl mx-auto pt-20 px-4 md:px-8">
-         <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown mb-4 tracking-tight">
+         <h2 className="text-3xl md:text-4xl font-playfair font-bold text-saddle-brown mb-4 tracking-tight">
              Crafting History Across Industries
          </h2>
-         <p className="text-modern-earthy text-lg max-w-2xl font-sans">
+         <p className="text-modern-earthy text-lg max-w-2xl font-lato">
              Our journey of excellence, serving diverse sectors with precision-engineered natural stone and mineral solutions.
          </p>
       </div>

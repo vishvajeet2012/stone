@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { motion } from "motion/react";
@@ -46,7 +46,7 @@ export default function Testimonials() {
           <span className="text-modern-earthy text-xs font-bold tracking-widest uppercase mb-2 block">
             Trusted Partners
           </span>
-          <h2 className="text-3xl text-3xl md:text-4xl font-serif font-bold text-saddle-brown">
+          <h2 className="text-3xl text-3xl md:text-4xl font-playfair font-bold text-saddle-brown">
             Our Clients & Testimonials
           </h2>
         </div>
@@ -65,7 +65,7 @@ export default function Testimonials() {
                     <div key={index} className="relative w-40 h-20 opacity-50 hover:opacity-100 transition-opacity duration-300 grayscale hover:grayscale-0">
                          {/* Using text fallback for now, replace with Image in production */}
                          <div className="w-full h-full flex items-center justify-center border border-saddle-brown/10 rounded-lg p-2">
-                             <span className="text-saddle-brown font-serif font-bold text-xl">{client.name}</span>
+                             <span className="text-saddle-brown font-playfair font-bold text-xl">{client.name}</span>
                          </div>
                     </div>
                 ))}
@@ -76,8 +76,8 @@ export default function Testimonials() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((item, index) => (
                 <div key={index} className="bg-white/40 backdrop-blur-sm p-8 rounded-2xl border border-saddle-brown/5 hover:border-saddle-brown/20 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 group">
-                    <div className="text-4xl text-saddle-brown/20 font-serif mb-4">“</div>
-                    <p className="text-saddle-brown/80 font-sans italic text-lg mb-6 leading-relaxed">
+                    <div className="text-4xl text-saddle-brown/20 font-playfair mb-4">â€œ</div>
+                    <p className="text-saddle-brown/80 font-lato italic text-lg mb-6 leading-relaxed">
                         {item.text}
                     </p>
                     <div className="flex items-center gap-4">
@@ -97,3 +97,4 @@ export default function Testimonials() {
     </section>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Image from "next/image";
@@ -112,11 +112,11 @@ export default function ProjectLightbox({ selectedProject, onClose, onNext, onPr
                     <span className="text-saddle-brown text-xs font-bold tracking-[0.2em] uppercase mb-4 flex items-center gap-2">
                         <MapPin className="w-3 h-3" /> {selectedProject.location}
                     </span>
-                    <h2 className="text-3xl md:text-4xl font-serif font-bold text-modern-earthy mb-6 leading-tight">
+                    <h2 className="text-3xl md:text-4xl font-playfair font-bold text-modern-earthy mb-6 leading-tight">
                         {selectedProject.title}
                     </h2>
                     <div className="w-12 h-1 bg-saddle-brown mb-6"></div>
-                    <p className="text-lg leading-relaxed text-modern-earthy/70 italic font-serif">
+                    <p className="text-lg leading-relaxed text-modern-earthy/70 italic font-playfair">
                         "{selectedProject.description}"
                     </p>
                 </div>
@@ -158,3 +158,4 @@ export default function ProjectLightbox({ selectedProject, onClose, onNext, onPr
     </AnimatePresence>
   );
 }
+

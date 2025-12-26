@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { LayoutGrid, ShieldCheck, Settings2 } from "lucide-react";
@@ -42,11 +42,11 @@ export default function ExportInfo() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 md:px-8 text-center relative z-10">
-        <h2 className="text-xl md:text-2xl font-serif font-bold tracking-[0.2em] text-saddle-brown mb-8 uppercase">
+        <h2 className="text-xl md:text-2xl font-playfair font-bold tracking-[0.2em] text-saddle-brown mb-8 uppercase">
           LAMSOUR UNIVERSAL EXPORTS
         </h2>
         
-        <p className="max-w-4xl mx-auto text-stone-600 leading-relaxed mb-16 text-sm md:text-base font-sans font-light">
+        <p className="max-w-4xl mx-auto text-stone-600 leading-relaxed mb-16 text-sm md:text-base font-lato font-light">
           Lamsour Universal Exports is one of the leading manufacturers, exporters, suppliers, and wholesalers of Indian natural stones, such as granite, marble, sandstone, slate, quartzite, limestone, and stone articles. The natural stone exporter supplies products like rough blocks, countertops, tiles, gangsaw slabs, cutter slabs along with different stone articles & monuments to customers based in the USA, Europe, Australia, South Africa, Hong Kong and many other countries around the globe.
         </p>
 
@@ -56,7 +56,7 @@ export default function ExportInfo() {
               <div className="text-saddle-brown mb-6 transition-transform group-hover:text-modern-earthy duration-500 group-hover:scale-110">
                 {feature.icon}
               </div>
-              <h3 className="text-sm font-serif font-bold tracking-widest text-saddle-brown group-hover:text-modern-earthy transition-colors duration-300">
+              <h3 className="text-sm font-playfair font-bold tracking-widest text-saddle-brown group-hover:text-modern-earthy transition-colors duration-300">
                 {feature.title}
               </h3>
             </div>
@@ -66,3 +66,4 @@ export default function ExportInfo() {
     </section>
   );
 }
+

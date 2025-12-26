@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import Link from "next/link";
@@ -25,20 +25,20 @@ export default function ProductInfo({ product }: ProductInfoProps) {
         stoneName={product.name} 
       />
       
-      <span className="text-modern-earthy font-sans text-sm font-bold tracking-widest uppercase mb-2">
+      <span className="text-modern-earthy font-lato text-sm font-bold tracking-widest uppercase mb-2">
         Premium Collection
       </span>
-      <h1 className="text-4xl md:text-5xl font-serif font-bold text-saddle-brown mb-6">
+      <h1 className="text-4xl md:text-5xl font-playfair font-bold text-saddle-brown mb-6">
         {product.name}
       </h1>
       
-      <p className="text-stone-600 font-sans text-lg leading-relaxed mb-8">
+      <p className="text-stone-600 font-lato text-lg leading-relaxed mb-8">
         {product.description}
       </p>
 
       {/* Specifications Table */}
       <div className="bg-white rounded-xl p-6 shadow-sm border border-stone-100 mb-8">
-        <h3 className="text-xl font-serif font-bold text-saddle-brown mb-4">Specifications</h3>
+        <h3 className="text-xl font-playfair font-bold text-saddle-brown mb-4">Specifications</h3>
         <div className="divide-y divide-stone-100">
           {product.specifications.map((spec, idx) => (
             <div key={idx} className="flex justify-between py-3 text-sm md:text-base">
@@ -74,3 +74,4 @@ export default function ProductInfo({ product }: ProductInfoProps) {
     </div>
   );
 }
+

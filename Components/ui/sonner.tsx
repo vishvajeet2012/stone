@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"
@@ -15,7 +15,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
       toastOptions={{
         classNames: {
           toast:
-            "group toast group-[.toaster]:bg-warm-cream group-[.toaster]:text-saddle-brown group-[.toaster]:border-saddle-brown/20 group-[.toaster]:shadow-lg font-sans",
+            "group toast group-[.toaster]:bg-warm-cream group-[.toaster]:text-saddle-brown group-[.toaster]:border-saddle-brown/20 group-[.toaster]:shadow-lg font-lato",
           description: "group-[.toast]:text-saddle-brown/70",
           actionButton:
             "group-[.toast]:bg-saddle-brown group-[.toast]:text-warm-cream",
@@ -29,3 +29,4 @@ const Toaster = ({ ...props }: ToasterProps) => {
 }
 
 export { Toaster }
+

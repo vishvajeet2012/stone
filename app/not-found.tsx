@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { MoveLeft, Search } from "lucide-react";
@@ -14,13 +14,13 @@ export default function NotFound() {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-6xl md:text-8xl font-serif font-bold text-saddle-brown animate-in slide-in-from-bottom-4 duration-500 delay-150">
+          <h1 className="text-6xl md:text-8xl font-playfair font-bold text-saddle-brown animate-in slide-in-from-bottom-4 duration-500 delay-150">
             404
           </h1>
-          <h2 className="text-2xl md:text-3xl font-serif font-medium text-modern-earthy animate-in slide-in-from-bottom-4 duration-500 delay-200">
+          <h2 className="text-2xl md:text-3xl font-playfair font-medium text-modern-earthy animate-in slide-in-from-bottom-4 duration-500 delay-200">
             Page Not Found
           </h2>
-          <p className="text-modern-earthy/80 font-sans animate-in slide-in-from-bottom-4 duration-500 delay-300">
+          <p className="text-modern-earthy/80 font-lato animate-in slide-in-from-bottom-4 duration-500 delay-300">
             The stone you are looking for has been moved<br className="hidden md:block" /> or does not exist in our collection.
           </p>
         </div>
@@ -46,3 +46,4 @@ export default function NotFound() {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -23,7 +23,7 @@ export default function SubCategoryList() {
             <span className="text-modern-earthy text-xs font-bold tracking-widest uppercase mb-2 block">
               Discover
             </span>
-            <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-playfair font-bold text-saddle-brown tracking-tight">
               Explore Our Categories
             </h2>
         </div>
@@ -47,7 +47,7 @@ export default function SubCategoryList() {
             
             {/* Gradient Overlay for Text Visibility */}
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-linear-to-t from-black/80 via-black/40 to-transparent">
-              <p className="text-warm-cream font-serif font-semibold tracking-wide text-lg md:text-xl transform translate-y-0 group-hover:-translate-y-1 transition-transform duration-300">
+              <p className="text-warm-cream font-playfair font-semibold tracking-wide text-lg md:text-xl transform translate-y-0 group-hover:-translate-y-1 transition-transform duration-300">
                 {item.name}
               </p>
             </div>
@@ -57,3 +57,4 @@ export default function SubCategoryList() {
     </section>
   );
 }
+

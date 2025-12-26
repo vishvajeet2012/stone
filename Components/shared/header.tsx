@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { Search, Camera, ShoppingCart, Heart, Globe, ChevronRight } from "lucide-react";
 import MobileNav from "@/Components/shared/MobileNav";
 import AnnouncementHomepage from "@/Components/shared/annoucmentHomepage";
@@ -123,7 +123,7 @@ export default function Header() {
             ))}
           </div>
           
-          <div className="flex items-center gap-2 text-modern-earthy text-xs font-bold font-serif hover:text-saddle-brown cursor-pointer">
+          <div className="flex items-center gap-2 text-modern-earthy text-xs font-bold font-playfair hover:text-saddle-brown cursor-pointer">
             <Globe className="w-4 h-4" />
             <span>ENG</span>
           </div>
@@ -158,7 +158,7 @@ export default function Header() {
                     {/* Right Content Area */}
                     <div className="w-3/4 p-10 bg-warm-cream overflow-y-auto">
                          <div className="mb-8">
-                             <h3 className="text-xl font-serif font-bold text-saddle-brown uppercase tracking-tight">
+                             <h3 className="text-xl font-playfair font-bold text-saddle-brown uppercase tracking-tight">
                                  {currentCategoryData.label}
                              </h3>
                          </div>

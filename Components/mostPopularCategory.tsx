@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
@@ -126,10 +126,10 @@ const HoverExpand_001 = ({
                     transition={{ duration: 0.3, delay: 0.1 }}
                     className="absolute bottom-0 left-0 right-0 p-6 z-20"
                   >
-                    <h3 className="text-2xl font-serif font-bold text-warm-cream mb-1">
+                    <h3 className="text-2xl font-playfair font-bold text-warm-cream mb-1">
                       {image.code}
                     </h3>
-                    <p className="text-sm text-warm-cream/80 font-sans">
+                    <p className="text-sm text-warm-cream/80 font-lato">
                         {image.alt}
                     </p>
                   </motion.div>
@@ -150,3 +150,4 @@ const HoverExpand_001 = ({
     </motion.div>
   );
 };
+

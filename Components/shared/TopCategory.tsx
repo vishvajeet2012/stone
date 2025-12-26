@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useMemo } from "react";
 import Link from "next/link";
@@ -107,7 +107,7 @@ export default function TopCategory({ categories = fallbackCategories, categorie
         ) : (
           <>
             <div className="hidden md:block text-center mb-4">
-              <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown tracking-tight ">
+              <h2 className="text-3xl md:text-4xl font-playfair font-bold text-saddle-brown tracking-tight ">
                 Browse by Categories
               </h2>
              

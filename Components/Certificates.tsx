@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Image from "next/image";
@@ -20,11 +20,11 @@ export default function Certificates() {
                 <span className="text-modern-earthy text-xs font-bold   tracking-widest uppercase mb-2 block">
                     Quality Assurance
                 </span>
-                <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown">
+                <h2 className="text-3xl md:text-4xl font-playfair font-bold text-saddle-brown">
                     Certifications & Standards
                 </h2>
             </div>
-             <p className="text-saddle-brown/80 font-sans max-w-md text-center md:text-right leading-relaxed text-sm md:text-base">
+             <p className="text-saddle-brown/80 font-lato max-w-md text-center md:text-right leading-relaxed text-sm md:text-base">
                 We adhere to the highest global standards of sustainability and quality control, ensuring every stone meets rigorous benchmarks.
             </p>
         </div>
@@ -39,7 +39,7 @@ export default function Certificates() {
                         */}
                          <div className="w-full h-full flex flex-col items-center justify-center text-center">
                              <div className="w-12 h-12 rounded-full border-2 border-saddle-brown flex items-center justify-center mb-2">
-                                <span className="text-2xl">🏆</span>
+                                <span className="text-2xl">ðŸ†</span>
                              </div>
                              <span className="text-saddle-brown font-bold text-sm">{cert.name}</span>
                          </div>
@@ -52,3 +52,4 @@ export default function Certificates() {
     </section>
   );
 }
+

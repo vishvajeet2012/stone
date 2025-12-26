@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Image from "next/image";
@@ -35,7 +35,7 @@ export default function ProjectGrid({ projects, onProjectClick }: ProjectGridPro
             <span className="text-warm-cream/80 text-xs font-bold tracking-widest uppercase mb-2 flex items-center gap-2">
               <MapPin className="w-3 h-3" /> {project.location}
             </span>
-            <h3 className="text-2xl text-white font-serif font-bold mb-1">
+            <h3 className="text-2xl text-white font-playfair font-bold mb-1">
               {project.title}
             </h3>
             <p className="text-warm-cream/70 text-sm italic">
@@ -47,3 +47,4 @@ export default function ProjectGrid({ projects, onProjectClick }: ProjectGridPro
     </div>
   );
 }
+

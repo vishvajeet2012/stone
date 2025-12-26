@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { LayoutGrid, ChevronRight } from "lucide-react";
@@ -36,7 +36,7 @@ export function MobileCategoryDrawer() {
             <div className="absolute top-3 left-1/2 transform -translate-x-1/2 w-12 h-1 bg-gray-300 rounded-full"></div>
             
             <div className="flex items-center justify-center pt-6 pb-4">
-              <DrawerTitle className="text-xl font-serif font-bold text-saddle-brown">
+              <DrawerTitle className="text-xl font-playfair font-bold text-saddle-brown">
                 Browse Categories
               </DrawerTitle>
             </div>
@@ -61,7 +61,7 @@ export function MobileCategoryDrawer() {
                          />
                       </div>
                       <div className="ml-4 flex-1">
-                        <h3 className="font-serif font-semibold text-saddle-brown text-lg group-hover:text-saddle-brown/80">
+                        <h3 className="font-playfair font-semibold text-saddle-brown text-lg group-hover:text-saddle-brown/80">
                           {category.subCategoryName}
                         </h3>
                         <p className="text-xs text-modern-earthy mt-1">
@@ -79,7 +79,7 @@ export function MobileCategoryDrawer() {
           
           <DrawerFooter className="bg-white border-t border-saddle-brown/10 p-4">
             <DrawerClose asChild>
-              <Button className="w-full bg-saddle-brown hover:bg-saddle-brown/90 text-warm-cream font-sans font-bold py-3 rounded-xl shadow-md transition-all">
+              <Button className="w-full bg-saddle-brown hover:bg-saddle-brown/90 text-warm-cream font-lato font-bold py-3 rounded-xl shadow-md transition-all">
                 Close
               </Button>
             </DrawerClose>
@@ -89,3 +89,4 @@ export function MobileCategoryDrawer() {
     </Drawer>
   );
 }
+

@@ -1,8 +1,8 @@
-export default function AdminDashboard() {
+﻿export default function AdminDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-serif font-bold text-warm-cream">Dashboard</h1>
+        <h1 className="text-4xl font-playfair font-bold text-warm-cream">Dashboard</h1>
         <p className="text-white/60 mt-2">Welcome back, Admin. Here's what's happening today.</p>
       </div>
 
@@ -29,3 +29,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

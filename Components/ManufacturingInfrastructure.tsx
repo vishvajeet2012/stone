@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
 
@@ -36,10 +36,10 @@ export default function ManufacturingInfrastructure() {
           <span className="text-sm font-bold uppercase tracking-widest text-modern-earthy mb-3 block">
             Our Backbone
           </span>
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown mb-6 tracking-tight">
+          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-saddle-brown mb-6 tracking-tight">
             Manufacturing & Infrastructure
           </h2>
-          <p className="max-w-2xl mx-auto text-lg text-modern-earthy font-sans leading-relaxed">
+          <p className="max-w-2xl mx-auto text-lg text-modern-earthy font-lato leading-relaxed">
             Combining traditional craftsmanship with cutting-edge technology to deliver excellence at scale.
           </p>
         </motion.div>
@@ -67,10 +67,10 @@ export default function ManufacturingInfrastructure() {
               {/* Content */}
               <div className="absolute bottom-0 left-0 right-0 p-8 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                 <div className="h-1 bg-warm-cream mb-4 w-12 group-hover:w-20 transition-all duration-500 ease-out" />
-                <h3 className="text-2xl font-serif font-bold text-warm-cream mb-3">
+                <h3 className="text-2xl font-playfair font-bold text-warm-cream mb-3">
                   {feature.title}
                 </h3>
-                <p className="text-warm-cream font-sans leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 transform translate-y-4 group-hover:translate-y-0">
+                <p className="text-warm-cream font-lato leading-relaxed opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 transform translate-y-4 group-hover:translate-y-0">
                   {feature.description}
                 </p>
               </div>
@@ -91,3 +91,4 @@ export default function ManufacturingInfrastructure() {
     </section>
   )
 }
+

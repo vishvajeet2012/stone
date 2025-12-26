@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { motion, MotionValue, useScroll, useTransform } from "framer-motion";
 import Lenis from "lenis";
@@ -105,7 +105,7 @@ const Column = ({ projects, y, onProjectClick }: ColumnProps) => {
               <span className="text-warm-cream/80 text-[10px] font-bold tracking-widest uppercase mb-1 flex items-center gap-1">
                 <MapPin className="w-3 h-3" /> {project.location}
               </span>
-              <h3 className="text-lg text-white font-serif font-bold mb-0.5 leading-tight">
+              <h3 className="text-lg text-white font-playfair font-bold mb-0.5 leading-tight">
                 {project.title}
               </h3>
             </div>
@@ -115,3 +115,4 @@ const Column = ({ projects, y, onProjectClick }: ColumnProps) => {
     </motion.div>
   );
 };
+

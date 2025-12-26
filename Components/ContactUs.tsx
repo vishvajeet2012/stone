@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { MapPin, Phone, Mail } from "lucide-react";
@@ -27,10 +27,10 @@ export default function ContactUs() {
                 <span className="text-modern-earthy text-xs font-bold   tracking-widest uppercase mb-2 block">
                     Get in Touch
                 </span>
-                <h2 className="text-4xl md:text-6xl font-serif font-bold text-saddle-brown mb-6">
+                <h2 className="text-4xl md:text-6xl font-playfair font-bold text-saddle-brown mb-6">
                     Let&apos;s Build Something Timeless
                 </h2>
-                <p className="text-saddle-brown/80 font-sans text-lg leading-relaxed max-w-md">
+                <p className="text-saddle-brown/80 font-lato text-lg leading-relaxed max-w-md">
                     Whether you are an architect, designer, or homeowner, we are here to help you find the perfect stone for your vision.
                 </p>
             </div>
@@ -105,3 +105,4 @@ export default function ContactUs() {
     </section>
   );
 }
+

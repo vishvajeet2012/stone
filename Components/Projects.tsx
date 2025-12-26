@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from "react";
@@ -58,7 +58,7 @@ const Projects = () => {
   return (
     <section className="w-full py-12 bg-warm-cream">
       <div className="max-w-7xl mx-auto px-4 md:px-8 mb-8">
-         <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown tracking-tight text-center">
+         <h2 className="text-3xl md:text-4xl font-playfair font-bold text-saddle-brown tracking-tight text-center">
             Our Projects
          </h2>
       </div>
@@ -139,10 +139,10 @@ const HoverExpandHorizontal = ({
                     transition={{ duration: 0.3, delay: 0.1 }}
                     className="absolute bottom-0 left-0 right-0 p-6 z-20"
                   >
-                    <h3 className="text-2xl font-serif font-bold text-warm-cream mb-1">
+                    <h3 className="text-2xl font-playfair font-bold text-warm-cream mb-1">
                       {image.code}
                     </h3>
-                    <p className="text-sm text-warm-cream/80 font-sans">
+                    <p className="text-sm text-warm-cream/80 font-lato">
                         {image.alt}
                     </p>
                   </motion.div>
@@ -221,10 +221,10 @@ const HoverExpandVertical = ({
                     exit={{ opacity: 0, y: 20 }}
                     className="absolute bottom-0 left-0 right-0 p-6 z-20"
                   >
-                     <h3 className="text-2xl font-serif font-bold text-warm-cream mb-1">
+                     <h3 className="text-2xl font-playfair font-bold text-warm-cream mb-1">
                       {image.code}
                     </h3>
-                    <p className="text-sm text-warm-cream/80 font-sans">
+                    <p className="text-sm text-warm-cream/80 font-lato">
                         {image.alt}
                     </p>
                   </motion.div>
@@ -244,3 +244,4 @@ const HoverExpandVertical = ({
     </motion.div>
   );
 };
+
