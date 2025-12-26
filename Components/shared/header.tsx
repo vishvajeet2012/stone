@@ -5,84 +5,58 @@ import AnnouncementHomepage from "@/Components/shared/annoucmentHomepage";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 
 const megaMenuData = [
   {
-    id: "oil-gas",
-    label: "CERAMIC PROPPANT FOR THE OIL & GAS INDUSTRY",
+    id: "company",
+    label: "Company",
     columns: [
        {
-         title: "BASE CERAMIC PROPPANT",
-         items: ["ECONOPROP", "CARBOLITE", "CARBOISP LITE", "CARBOPROP", "CARBOHSP", "CARBOHYDROPROP"]
-       },
-       {
-         title: "ULTRA CONDUCTIVE PROPPANT",
-         items: ["KRYPTOSPHERE LD", "KRYPTOSPHERE XT", "KRYPTOSPHERE HD"]
-       },
-       {
-         title: "HIGH-TRANSPORT PROPPANT",
-         items: ["CARBOAIR", "CARBONRT GP", "KRYPTOAIR"]
-       },
-       {
-         title: "MICROPROPPANT",
-         items: ["NANOMITE"]
-       },
-       {
-         title: "PROPPANT PACK CONSOLIDATION",
-         items: ["CARBOBOND LITE", "CARBOBOND KRYPTOSPHERE LD", "CARBOBOND KRYPTOSPHERE XT", "CARBOBOND KRYPTOSPHERE HD", "CARBOBOND CARBOPROP", "FUSION", "ARCTICBOND"]
-       },
-       {
-         title: "FLOW ENHANCEMENT",
-         items: ["DIVERTAPROP"]
-       },
-        {
-         title: "PRODUCTION ASSURANCE",
-         items: ["SCALEGUARD", "ASPHALTENEGUARD", "SALTGUARD"]
-       },
-       {
-         title: "FRACTURE EVALUATION",
-         items: ["CARBONRT ULTRA", "CARBONRT", "CARBONRT GP", "CARBONRT CEMENT"]
+         title: "About Us",
+         items: [
+           { label: "Our Story", href: "#" }, 
+           { label: "Quality & Certifications", href: "#" }, 
+           { label: "Sustainability & Ethics", href: "#" }, 
+           { label: "Connect With Us", href: "#" }
+         ]
        }
     ]
   },
   {
-    id: "foundries",
-    label: "CERAMIC MEDIA FOR FOUNDRIES",
+    id: "projects",
+    label: "Projects",
     columns: [
-        { title: "MOLDING MEDIA", items: ["ACCUCAST", "ID FLASH REDUCTION"] },
-        { title: "SPECIALTY", items: ["THERMAL STORAGE"] }
-    ]
-  },
-  {
-    id: "renewable",
-    label: "CERAMIC MEDIA FOR RENEWABLE ENERGY",
-    columns: [
-        { title: "SOLAR THERMAL", items: ["THERMAL BEADS"] },
-        { title: "HEAT TRANSFER", items: ["HIGH DENSITY STORE"] }
-    ]
-  },
-   {
-    id: "grinding",
-    label: "CERAMIC MEDIA FOR FINE AND ULTRA FINE GRINDING",
-    columns: [
-        { title: "GRINDING MEDIA", items: ["CARBOBEAD", "KERAMAX"] }
-    ]
-  },
-  {
-    id: "industrial",
-    label: "CERAMIC MEDIA FOR INDUSTRIAL APPLICATIONS",
-    columns: [
-        { title: "SURFACE TREATMENT", items: ["BLAST MEDIA", "SHOT PEENING"] },
-         { title: "FILTRATION", items: ["WATER FILTRATION", "AIR SCRUBBING"] }
+        { 
+          title: "Our Portfolio", 
+          items: [
+            { label: "Residential Projects", href: "/projects/residential" },
+            { label: "Commercial Projects", href: "/projects/commercial" },
+            { label: "International Installations", href: "/projects/international" }
+          ] 
+        }
     ]
   }
 ];
 
 export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(megaMenuData[0].id);
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
   const currentCategoryData = megaMenuData.find(c => c.id === activeCategory);
+
+  const handleMouseEnter = (link: string) => {
+    const categoryId = link.toLowerCase();
+    const hasMegaMenu = megaMenuData.some(c => c.id === categoryId);
+    
+    if (hasMegaMenu) {
+      setActiveCategory(categoryId);
+      setIsMegaMenuOpen(true);
+    } else {
+      setIsMegaMenuOpen(false);
+      setActiveCategory(null);
+    }
+  };
 
   return (
     <nav className="w-full bg-warm-cream relative z-50">
@@ -92,7 +66,7 @@ export default function Header() {
       {/* Main Header Area */}
       <div 
         className="max-w-7xl mx-auto px-4 md:px-8 py-4 flex flex-col gap-6"
-        onMouseLeave={() => setIsMegaMenuOpen(false)}
+        onMouseLeave={() => { setIsMegaMenuOpen(false); setActiveCategory(null); }}
       >
    
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
@@ -134,18 +108,18 @@ export default function Header() {
      
         <div className="hidden lg:flex items-center justify-between border-t border-saddle-brown/10 pt-4 pb-2 relative">
           <div className="flex items-center gap-8 text-[13px] font-bold text-modern-earthy tracking-tight">
-            {["Products", "Design Tools", "Inspiration", "Resources", "For the Trade", "Contact Us", "Dealer Locator"].map((link) => (
-              <a 
+            {["Products", "Projects", "Company", "Inspiration", "Resources", "Contact Us"].map((link) => (
+              <Link 
                 key={link} 
-                href="#" 
+                href={link === "Projects" ? "/projects/residential" : "#"} // Default link logic can be improved
                 className={cn(
-                  "hover:text-saddle-brown uppercase transition-colors py-2",
-                  link === "Products" && isMegaMenuOpen && "text-saddle-brown"
+                  "hover:text-saddle-brown uppercase transition-colors py-2 relative",
+                  activeCategory === link.toLowerCase() && isMegaMenuOpen && "text-saddle-brown after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-saddle-brown"
                 )}
-                onMouseEnter={() => link === "Products" && setIsMegaMenuOpen(true)}
+                onMouseEnter={() => handleMouseEnter(link)}
               >
                 {link}
-              </a>
+              </Link>
             ))}
           </div>
           
@@ -156,37 +130,28 @@ export default function Header() {
 
           {/* Mega Menu Overlay */}
           <AnimatePresence>
-            {isMegaMenuOpen && (
+            {isMegaMenuOpen && currentCategoryData && (
                 <motion.div 
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.2 }}
-                    className="absolute top-full left-0 w-full bg-warm-cream shadow-2xl rounded-b-xl border-t border-saddle-brown/10 overflow-hidden flex min-h-[500px]"
+                    className="absolute top-full left-0 w-full bg-warm-cream shadow-2xl rounded-b-xl border-t border-saddle-brown/10 overflow-hidden flex min-h-[300px] z-50"
                 >
-                    {/* Left Sidebar */}
+                    {/* Left Sidebar - simplified for Company/Projects */}
                     <div className="w-1/4 bg-saddle-brown/5 border-r border-saddle-brown/10 py-8">
                         <div className="px-6 mb-4">
-                            <h4 className="text-saddle-brown/40 text-xs font-bold uppercase tracking-widest mb-4">Our Manufacturing Solutions</h4>
+                            <h4 className="text-saddle-brown/40 text-xs font-bold uppercase tracking-widest mb-4">Explore</h4>
                         </div>
                         <ul className="space-y-1">
-                            {megaMenuData.map((cat) => (
-                                <li key={cat.id}>
-                                    <button 
-                                        onClick={() => setActiveCategory(cat.id)}
-                                        onMouseEnter={() => setActiveCategory(cat.id)}
-                                        className={cn(
-                                            "w-full text-left px-6 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-between group transition-all",
-                                            activeCategory === cat.id 
-                                                ? "bg-warm-cream text-saddle-brown border-l-4 border-saddle-brown shadow-sm" 
-                                                : "text-modern-earthy/70 hover:bg-saddle-brown/5 hover:text-saddle-brown"
-                                        )}
-                                    >
-                                        <span className="max-w-[85%] leading-relaxed">{cat.label}</span>
-                                        {activeCategory === cat.id && <ChevronRight className="w-4 h-4 text-saddle-brown" />}
-                                    </button>
-                                </li>
-                            ))}
+                             <li key={currentCategoryData.id}>
+                                <div 
+                                    className="w-full text-left px-6 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-between group bg-warm-cream text-saddle-brown border-l-4 border-saddle-brown shadow-sm"
+                                >
+                                    <span className="max-w-[85%] leading-relaxed">{currentCategoryData.label}</span>
+                                    <ChevronRight className="w-4 h-4 text-saddle-brown" />
+                                </div>
+                            </li>
                         </ul>
                     </div>
 
@@ -194,21 +159,25 @@ export default function Header() {
                     <div className="w-3/4 p-10 bg-warm-cream overflow-y-auto">
                          <div className="mb-8">
                              <h3 className="text-xl font-serif font-bold text-saddle-brown uppercase tracking-tight">
-                                 {currentCategoryData?.label}
+                                 {currentCategoryData.label}
                              </h3>
                          </div>
-                         <div className="grid grid-cols-4 gap-x-8 gap-y-12">
-                             {currentCategoryData?.columns.map((col, idx) => (
+                         <div className="grid grid-cols-3 gap-x-8 gap-y-12">
+                             {currentCategoryData.columns.map((col, idx) => (
                                  <div key={idx} className="space-y-4">
                                      <h5 className="text-xs font-bold text-saddle-brown/60 uppercase tracking-widest border-b border-saddle-brown/10 pb-2">
                                          {col.title}
                                      </h5>
                                      <ul className="space-y-2">
                                          {col.items.map(item => (
-                                             <li key={item}>
-                                                 <a href="#" className="text-xs font-medium text-modern-earthy/80 hover:text-saddle-brown hover:translate-x-1 transition-all block">
-                                                     {item}
-                                                 </a>
+                                             <li key={item.label}>
+                                                 <Link 
+                                                    href={item.href} 
+                                                    className="text-sm font-medium text-modern-earthy/80 hover:text-saddle-brown hover:translate-x-1 transition-all block"
+                                                    onClick={() => { setIsMegaMenuOpen(false); setActiveCategory(null); }}
+                                                 >
+                                                     {item.label}
+                                                 </Link>
                                              </li>
                                          ))}
                                      </ul>
