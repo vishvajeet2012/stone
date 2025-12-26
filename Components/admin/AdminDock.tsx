@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useRef } from "react";
-import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 
@@ -28,6 +29,7 @@ import {
 
 export default function AdminDock() {
   const mouseX = useMotionValue(Infinity);
+  const pathname = usePathname();
 
   const icons = [
     { title: "Dashboard", icon: LayoutDashboard, href: "/admin" },
@@ -46,15 +48,24 @@ export default function AdminDock() {
          onMouseLeave={() => mouseX.set(Infinity)}
     >
       {icons.map((item, index) => (
-        <DockIcon key={index} mouseX={mouseX} title={item.title}>
-            <item.icon className="w-full h-full text-warm-cream" />
+        <DockIcon 
+            key={index} 
+            mouseX={mouseX} 
+            title={item.title} 
+            href={item.href} 
+            isActive={pathname === item.href}
+        >
+            <item.icon className={cn(
+                "w-full h-full transition-colors duration-200", 
+                 pathname === item.href ? "text-white" : "text-warm-cream"
+            )} />
         </DockIcon>
       ))}
       
       {/* Separator */}
       <div className="w-[1px] h-10 bg-white/20 mx-1" />
 
-       <DockIcon mouseX={mouseX} title="Logout">
+       <DockIcon mouseX={mouseX} title="Logout" href="/auth/login" isActive={false}>
             <LogOut className="w-full h-full text-red-400" />
        </DockIcon>
 
@@ -62,7 +73,19 @@ export default function AdminDock() {
   );
 }
 
-function DockIcon({ mouseX, title, children }: { mouseX: any, title: string, children: React.ReactNode }) {
+function DockIcon({ 
+    mouseX, 
+    title, 
+    children, 
+    href, 
+    isActive 
+}: { 
+    mouseX: any, 
+    title: string, 
+    children: React.ReactNode, 
+    href: string,
+    isActive: boolean
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   const distance = useTransform(mouseX, (val: number) => {
@@ -74,19 +97,31 @@ function DockIcon({ mouseX, title, children }: { mouseX: any, title: string, chi
   const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
 
   return (
-    <motion.div
-      ref={ref}
-      style={{ width }}
-      className="aspect-square rounded-xl bg-saddle-brown/90 hover:bg-saddle-brown border border-white/10 flex items-center justify-center relative group cursor-pointer shadow-lg"
-    >
-        <div className="w-6 h-6 sm:w-8 sm:h-8 pointer-events-none">
-            {children}
-        </div>
-        
-        {/* Tooltip */}
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/80 backdrop-blur-sm rounded-md text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none border border-white/10">
-            {title}
-        </div>
-    </motion.div>
+    <Link href={href}>
+        <motion.div
+        ref={ref}
+        style={{ width }}
+        className={cn(
+            "aspect-square rounded-xl border flex items-center justify-center relative group cursor-pointer shadow-lg transition-all duration-300",
+            isActive 
+                ? "bg-saddle-brown border-white/40 shadow-white/10 scale-110 ring-2 ring-white/20" 
+                : "bg-saddle-brown/90 hover:bg-saddle-brown border-white/10 hover:border-white/30"
+        )}
+        >
+            <div className="w-6 h-6 sm:w-8 sm:h-8 pointer-events-none">
+                {children}
+            </div>
+            
+            {/* Active Indicator Dot */}
+             {isActive && (
+                <span className="absolute -bottom-2 w-1.5 h-1.5 bg-white rounded-full shadow-md shadow-white/50" />
+            )}
+            
+            {/* Tooltip */}
+            <div className="absolute -top-12 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/80 backdrop-blur-sm rounded-md text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none border border-white/10">
+                {title}
+            </div>
+        </motion.div>
+    </Link>
   );
 }

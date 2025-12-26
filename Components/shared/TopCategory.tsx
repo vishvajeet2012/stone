@@ -7,7 +7,18 @@ import Image from "next/image"; // Using next/image for better performance
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-// Placeholder data for stone categories if props aren't provided immediately
+import "slick-carousel/slick/slick-theme.css";
+
+const slugify = (text: string) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .replace(/\s+/g, '-') 
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-')
+    .replace(/^-+/, '') 
+    .replace(/-+$/, '');
+};
 export const fallbackCategories = [
   {
     _id: "1",
@@ -104,7 +115,7 @@ export default function TopCategory({ categories = fallbackCategories, categorie
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {subCategoryData?.slice(0, 8).map((value: any) => (
                     <Link 
-                      href={`/category/${value?._id}`} 
+                      href={`/category/${slugify(value?.subCategoryName || '')}`} 
                       key={value?._id} 
                       className="aspect-square group relative block overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow"
                     > 
@@ -137,7 +148,7 @@ export default function TopCategory({ categories = fallbackCategories, categorie
                   {subCategoryData?.map((value) => (
                     <div key={value?._id} className="px-2 focus:outline-none">
                       <Link 
-                        href={`/category/${value?._id}`}
+                        href={`/category/${slugify(value?.subCategoryName || '')}`}
                         className="block group"
                       >
                         <div className="relative">
