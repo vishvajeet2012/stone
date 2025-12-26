@@ -24,7 +24,7 @@ export default function ContactUs() {
         {/* Left: Contact Info */}
         <div className="space-y-8">
             <div>
-                <span className="text-modern-earthy text-xs font-bold tracking-widest uppercase mb-2 block">
+                <span className="text-modern-earthy text-xs font-bold   tracking-widest uppercase mb-2 block">
                     Get in Touch
                 </span>
                 <h2 className="text-4xl md:text-6xl font-serif font-bold text-saddle-brown mb-6">

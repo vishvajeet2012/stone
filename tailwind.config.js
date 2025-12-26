@@ -15,8 +15,8 @@ export default {
         foreground: "#8B5A2B",
       },
       fontFamily: {
-        serif: ["var(--font-playfair)", "serif"],
-        sans: ["var(--font-lato)", "sans-serif"],
+        serif: ["var(--font-playfair)", "var(--font-cinzel)"],
+        sans: ["var(--font-lato)", "var(--font-montserrat)"],
       },
     },
   },

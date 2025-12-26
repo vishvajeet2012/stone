@@ -9,6 +9,11 @@
 
   --color-background: var(--color-warm-cream);
   --color-foreground: var(--color-saddle-brown);
+
+  --font-playfair: var(--font-playfair);
+  --font-lato: var(--font-lato);
+  --font-cinzel: var(--font-cinzel);
+  --font-montserrat: var(--font-montserrat);
 }
 
 /* Force light theme colors for this specific design request */

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Lato } from "next/font/google";
+import { Playfair_Display, Lato, Cinzel, Montserrat } from "next/font/google";
 import "./globals.css";
 import Header from "@/Components/shared/header";
 import Footer from "@/Components/shared/footer";
@@ -18,6 +18,18 @@ const lato = Lato({
   display: "swap",
 });
 
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  variable: "--font-cinzel",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "Maitrii Stone Gallery",
   description: "Experience Timeless Elegance with Premium Stone Surfaces",
@@ -31,7 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${playfair.variable} ${lato.variable} font-sans antialiased`}
+        className={`${playfair.variable} ${lato.variable} ${cinzel.variable} ${montserrat.variable} font-sans antialiased`}
       >
         <Header/>
         {children}

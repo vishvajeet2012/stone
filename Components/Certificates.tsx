@@ -17,7 +17,7 @@ export default function Certificates() {
       <div className="max-w-7xl mx-auto border-t border-saddle-brown/10 pt-16">
         <div className="flex flex-col md:flex-row items-center justify-between mb-12 gap-8">
             <div className="text-center md:text-left">
-                <span className="text-modern-earthy text-xs font-bold tracking-widest uppercase mb-2 block">
+                <span className="text-modern-earthy text-xs font-bold   tracking-widest uppercase mb-2 block">
                     Quality Assurance
                 </span>
                 <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown">
