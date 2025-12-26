@@ -1,0 +1,20 @@
+import React from "react";
+import CategoryBanner from "@/Components/category/CategoryBanner";
+import SubCategoryList from "@/Components/category/SubCategoryList";
+
+export default async function CategoryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  return (
+    <main className="min-h-screen bg-warm-cream">
+      <CategoryBanner />
+      <SubCategoryList />
+
+      <div className="hidden">Category: {slug}</div>
+    </main>
+  );
+}
