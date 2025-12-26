@@ -115,7 +115,7 @@ export default function TopCategory({ categories = fallbackCategories, categorie
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                   {subCategoryData?.slice(0, 8).map((value: any) => (
                     <Link 
-                      href={`/category/${slugify(value?.subCategoryName || '')}`} 
+                      href={`/${slugify(value?.subCategoryName || '')}`} 
                       key={value?._id} 
                       className="aspect-square group relative block overflow-hidden rounded-lg shadow-sm hover:shadow-md transition-shadow"
                     > 
@@ -148,7 +148,7 @@ export default function TopCategory({ categories = fallbackCategories, categorie
                   {subCategoryData?.map((value) => (
                     <div key={value?._id} className="px-2 focus:outline-none">
                       <Link 
-                        href={`/category/${slugify(value?.subCategoryName || '')}`}
+                        href={`/${slugify(value?.subCategoryName || '')}`}
                         className="block group"
                       >
                         <div className="relative">
