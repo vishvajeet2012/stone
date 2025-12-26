@@ -12,6 +12,8 @@ export interface ProjectItem {
   location: string;
   stoneUsed: string;
   image: string;
+  gallery: string[];
+  description: string;
 }
 
 interface ProjectListingProps {
