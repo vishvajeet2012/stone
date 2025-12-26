@@ -23,7 +23,7 @@ export default function SubCategoryList() {
             <span className="text-modern-earthy text-xs font-bold tracking-widest uppercase mb-2 block">
               Discover
             </span>
-            <h2 className="text-3xl md:text-5xl font-serif font-bold text-saddle-brown tracking-tight">
+            <h2 className="text-3xl md:text-4xl font-serif font-bold text-saddle-brown tracking-tight">
               Explore Our Categories
             </h2>
         </div>

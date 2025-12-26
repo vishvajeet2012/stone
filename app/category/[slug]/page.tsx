@@ -11,7 +11,7 @@ export default async function CategoryPage({
   const { slug } = await params;
 
   return (
-    <main className="min-h-screen bg-warm-cream">
+    <main className="w-full h-auto bg-warm-cream">
      
       <CategoryBanner />
       <SubCategoryList />

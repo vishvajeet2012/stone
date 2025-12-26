@@ -5,12 +5,12 @@ import Slider from "react-slick";
 import Image from "next/image";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 const bannerImages = [
-  "https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&q=80&w=2000",
-  "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=2000",
-  "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&q=80&w=2000",
-  "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&q=80&w=2000",
+  "/stoneBanner.jpg",
+  "/stoneBanner2.jpg",
 ];
 
 export default function CategoryBanner() {
@@ -27,28 +27,35 @@ export default function CategoryBanner() {
   };
 
   return (
-    <div className="w-full relative h-[40vh] md:h-[60vh] overflow-hidden">
-      <Slider {...settings} className="h-full w-full">
+    <div className="w-full relative h-[40vh] md:h-[60vh] overflow-hidden bg-gray-200">
+      <Slider {...settings} className="category-banner-slider h-full w-full">
         {bannerImages.map((src, index) => (
-          <div key={index} className="relative h-[40vh] md:h-[60vh] w-full focus:outline-none">
+          <div key={index} className="relative h-[40vh] md:h-[60vh] w-full focus:outline-none outline-none border-none">
             <Image
               src={src}
               alt={`Category Banner ${index + 1}`}
               fill
-              className="object-cover"
               priority={index === 0}
+              className="object-cover"
+              sizes="100vw"
             />
-            {/* Optional Overlay for better text visibility if we add text later */}
-            <div className="absolute inset-0 bg-black/20" />
+            {/* Optional Overlay for better text visibility */}
+            <div className="absolute inset-0 bg-black/30" />
             
-            <div className="absolute inset-0 flex items-center justify-center">
-                <h1 className="text-4xl md:text-6xl text-warm-cream font-serif font-bold tracking-widest uppercase drop-shadow-md">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <h1 className="text-3xl md:text-5xl text-warm-cream font-serif font-bold tracking-widest uppercase drop-shadow-lg text-center px-4">
                    Premium Collection
                 </h1>
             </div>
           </div>
         ))}
       </Slider>
+      <style jsx global>{`
+        .category-banner-slider .slick-list,
+        .category-banner-slider .slick-track {
+          height: 100%;
+        }
+      `}</style>
     </div>
   );
 }
