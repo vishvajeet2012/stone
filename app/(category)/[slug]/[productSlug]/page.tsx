@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import Image from "next/image";
 import { 
   Heart, 
   Share2, 
@@ -12,33 +12,37 @@ import {
 import { SimilarStyles } from "@/Components/SimilarStyles";
 import { Trims } from "@/Components/Trims";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 export default function ProductDetailPage() {
+  const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("SPECS");
   const [selectedImage, setSelectedImage] = useState<number>(0);
 
   const images = [
-    "/stone1.jpg", 
-    "/stone2.jpg", 
-    "/stone3.jpg"
+    "/stoneBanner.jpg", 
+    "/stoneBanner2.jpg", 
+    "/Peacock-Pietra.webp"
   ];
 
+
+
   const similarStyles = [
-    { id: "1", name: "Andover Blythe", image: "/stone1.jpg", collection: "Wayne Parc" },
-    { id: "2", name: "Glenridge Reclaimed Oak", image: "/stone2.jpg", collection: "Wayne Parc" },
-    { id: "3", name: "Glenridge Aged Hickory", image: "/stone3.jpg", collection: "Wayne Parc" },
-    { id: "4", name: "Katavia Reclaimed Oak", image: "/stone1.jpg", collection: "Wayne Parc" },
-    { id: "5", name: "Wilmont Reclaimed Oak", image: "/stone2.jpg", collection: "Wayne Parc" },
-    { id: "6", name: "Glenridge Jatoba", image: "/stone3.jpg", collection: "Wayne Parc" },
+    { id: "1", name: "Andover Blythe", image: "/stoneBanner.jpg", collection: "Wayne Parc" },
+    { id: "2", name: "Glenridge Reclaimed Oak", image: "/stoneBanner2.jpg", collection: "Wayne Parc" },
+    { id: "3", name: "Glenridge Aged Hickory", image: "/Peacock-Pietra.webp", collection: "Wayne Parc" },
+    { id: "4", name: "Katavia Reclaimed Oak", image: "/Leopard-.webp", collection: "Wayne Parc" },
+    { id: "5", name: "Wilmont Reclaimed Oak", image: "/stoneBanner.jpg", collection: "Wayne Parc" },
+    { id: "6", name: "Glenridge Jatoba", image: "/stoneBanner2.jpg", collection: "Wayne Parc" },
   ];
 
   const trimItems = [
-    { id: "1", name: "Barnstorm - End Cap", dimensions: '1.5"x0.25"x94"', sku: "VTTBARSTO-EC", image: "/stone1.jpg" },
-    { id: "2", name: "Barnstorm - Stair Tread", dimensions: '12"x1.25"x47.25"', sku: "VTTBARSTO-ST-EE", image: "/stone2.jpg" },
-    { id: "3", name: "Flush Stair Nose", dimensions: '2.75" x 0.75" x 94"', sku: "VTTBARSTO-FSN", image: "/stone3.jpg" },
-    { id: "4", name: "Barnstorm - Flush Stairnose", dimensions: '2.75" x 0.75" x 94"', sku: "VTTBARSTO-FSN-EE", image: "/stone1.jpg" },
-    { id: "5", name: "Barnstorm - Reducer", dimensions: '1.77"x0.345"x94"', sku: "VTTBARSTO-SR", image: "/stone2.jpg" },
-    { id: "6", name: "Barnstorm - TL Molding", dimensions: '1.77"x0.28"x94"', sku: "VTTBARSTO-TL", image: "/stone3.jpg" },
+    { id: "1", name: "Barnstorm - End Cap", dimensions: '1.5"x0.25"x94"', sku: "VTTBARSTO-EC", image: "/stoneBanner.jpg" },
+    { id: "2", name: "Barnstorm - Stair Tread", dimensions: '12"x1.25"x47.25"', sku: "VTTBARSTO-ST-EE", image: "/stoneBanner2.jpg" },
+    { id: "3", name: "Flush Stair Nose", dimensions: '2.75" x 0.75" x 94"', sku: "VTTBARSTO-FSN", image: "/Peacock-Pietra.webp" },
+    { id: "4", name: "Barnstorm - Flush Stairnose", dimensions: '2.75" x 0.75" x 94"', sku: "VTTBARSTO-FSN-EE", image: "/Leopard-.webp" },
+    { id: "5", name: "Barnstorm - Reducer", dimensions: '1.77"x0.345"x94"', sku: "VTTBARSTO-SR", image: "/stoneBanner.jpg" },
+    { id: "6", name: "Barnstorm - TL Molding", dimensions: '1.77"x0.28"x94"', sku: "VTTBARSTO-TL", image: "/stoneBanner2.jpg" },
   ];
 
   const specs = [
@@ -76,7 +80,12 @@ export default function ProductDetailPage() {
                   )}
                  >
                    <div className="relative w-full h-full bg-warm-cream">
-                    <p className="absolute inset-0 flex items-center justify-center text-xs text-modern-earthy/40">IMG {idx + 1}</p>
+                     <Image 
+                        src={img} 
+                        alt={`Thumbnail ${idx + 1}`}
+                        fill
+                        className="object-cover"
+                     />
                    </div>
                    {idx === 0 && <div className="absolute bottom-0 left-0 w-full bg-modern-earthy/90 text-warm-cream text-[10px] py-1 text-center uppercase">Detail</div>}
                    {idx === 1 && <div className="absolute bottom-0 left-0 w-full bg-modern-earthy/90 text-warm-cream text-[10px] py-1 text-center uppercase leading-tight">View in Room</div>}
@@ -93,10 +102,19 @@ export default function ProductDetailPage() {
                         </button>
                      </div>
                      
-                     <div className="absolute inset-0 bg-[url('https://www.msisurfaces.com/images/vinyl-flooring/room-scenes/large/wayne-parc-reserve-elwood.jpg')] bg-cover bg-center" />
+                     <div className="absolute inset-0">
+                        <Image 
+                          src={images[selectedImage]} 
+                          alt="Stone Texture" 
+                          fill
+                          className="object-cover transition-all duration-500"
+                        />
+                     </div>
 
                      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
-                        <button className="bg-modern-earthy/90 text-warm-cream px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-modern-earthy transition-colors">
+                        <button 
+                            onClick={() => setIsExpanded(true)}
+                            className="bg-modern-earthy/90 text-warm-cream px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-modern-earthy transition-colors">
                             <Maximize2 className="w-4 h-4" /> Click to expand
                         </button>
                      </div>
@@ -197,6 +215,29 @@ export default function ProductDetailPage() {
             <SimilarStyles items={similarStyles} />
             <Trims items={trimItems} />
         </div>
+
+        {/* Expanded Image Modal */}
+        {isExpanded && (
+            <div 
+                className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 cursor-zoom-out"
+                onClick={() => setIsExpanded(false)}
+            >
+                <button 
+                    className="absolute top-6 right-6 text-white/80 hover:text-white transition-colors"
+                >
+                    <Maximize2 className="w-8 h-8 rotate-45" /> {/* Using rotate-45 to mimic 'X' if Close icon isn't imported, but I should probably import X */}
+                </button>
+                <div className="relative w-full h-full max-w-7xl max-h-[90vh]">
+                     <Image
+                        src={images[selectedImage]}
+                        alt="Expanded View"
+                        fill
+                        className="object-contain"
+                        priority
+                     />
+                </div>
+            </div>
+        )}
 
       </div>
     </div>
