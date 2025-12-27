@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Project from "@/model/project";
+import ImageModel from "@/model/image";
 import { slugify } from "@/lib/utils";
 
 export async function GET(_req: Request) {
@@ -32,28 +33,27 @@ export async function POST(req: Request) {
       body.slug = slugify(body.title);
     }
 
-    const project = await Project.create(body);
+    const project: any = await Project.create(body);
 
     // Link images back to project
-    const ImageModel = require("@/model/image").default;
 
-    if (project.images && project.images.length > 0) {
+    if (body.images && body.images.length > 0) {
         await ImageModel.updateMany(
-            { _id: { $in: project.images } },
+            { _id: { $in: body.images } },
             { relatedProject: project._id }
         );
     }
 
-    if (project.BannerImages && project.BannerImages.length > 0) {
+    if (body.BannerImages && body.BannerImages.length > 0) {
         await ImageModel.updateMany(
-            { _id: { $in: project.BannerImages } },
+            { _id: { $in: body.BannerImages } },
             { relatedProject: project._id }
         );
     }
 
-    if (project.gallery && project.gallery.length > 0) {
+    if (body.gallery && body.gallery.length > 0) {
         await ImageModel.updateMany(
-            { _id: { $in: project.gallery } },
+            { _id: { $in: body.gallery } },
             { relatedProject: project._id }
         );
     }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Product from "@/model/product";
 import ImageModel from "@/model/image";
+import { verifyAdmin } from "@/lib/auth-server";
 
 export async function GET(
   req: Request,

@@ -7,7 +7,9 @@ import ImageModel from "@/model/image";
 export async function GET(_req: Request) {
   try {
     await dbConnect();
-    const categories = await Category.find().sort({ order: 1 });
+    const categories = await Category.find().sort({ order: 1 })
+      .populate('images')
+      .populate('BannerImages');
     return NextResponse.json({ success: true, data: categories });
   } catch (_error) {
     return NextResponse.json({ success: false, error: "Failed to fetch categories" }, { status: 500 });

@@ -14,7 +14,8 @@ export async function GET(
     const { slug } = params;
     const category = await Category.findOne({ slug })
       .populate('parentCategory')
-      .populate('image');
+      .populate('images')
+      .populate('BannerImages');
 
     if (!category) {
       return NextResponse.json({ success: false, error: "Category not found" }, { status: 404 });

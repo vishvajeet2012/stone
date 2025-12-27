@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Product from "@/model/product";
+import ImageModel from "@/model/image";
 import { slugify } from "@/lib/utils";
 
 export async function GET(req: Request) {
@@ -34,22 +35,21 @@ export async function POST(req: Request) {
       body.slug = slugify(body.name);
     }
 
-    const product = await Product.create(body);
+    const product: any = await Product.create(body);
 
     // Link images back to product
-    const ImageModel = require("@/model/image").default;
     
     // Main images
-    if (product.images && product.images.length > 0) {
+    if (body.images && body.images.length > 0) {
       await ImageModel.updateMany(
-        { _id: { $in: product.images } },
+        { _id: { $in: body.images } },
         { relatedProduct: product._id }
       );
     }
 
     // Finishes images
-    if (product.finishes) {
-      for (const finish of product.finishes) {
+    if (body.finishes) {
+      for (const finish of body.finishes) {
         if (finish.image) {
            await ImageModel.findByIdAndUpdate(finish.image, { relatedProduct: product._id });
         }
@@ -57,8 +57,8 @@ export async function POST(req: Request) {
     }
 
     // Trims images
-    if (product.trims) {
-      for (const trim of product.trims) {
+    if (body.trims) {
+      for (const trim of body.trims) {
         if (trim.image) {
            await ImageModel.findByIdAndUpdate(trim.image, { relatedProduct: product._id });
         }
