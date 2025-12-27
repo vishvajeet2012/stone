@@ -258,15 +258,9 @@ export default function AdminCategories() {
                                 <p className="line-clamp-3 mb-4">{category.description}</p>
                             )}
                             
-                            <div className="grid grid-cols-2 gap-2 text-xs">
-                                <div className="flex flex-col">
-                                    <span className="text-gray-400">Level</span>
-                                    <span className="font-medium">{category.level}</span>
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-gray-400">Order</span>
-                                    <span className="font-medium">{category.order}</span>
-                                </div>
+                            <div className="flex flex-col text-xs">
+                                <span className="text-gray-400">Order</span>
+                                <span className="font-medium">{category.order}</span>
                             </div>
                         </div>
                     </CardContent>
@@ -285,7 +279,7 @@ export default function AdminCategories() {
       </div>
       
        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] bg-warm-cream">
+        <DialogContent className="sm:max-w-[600px] h-full overflow-scroll bg-warm-cream">
           <DialogHeader>
             <DialogTitle className="font-playfair text-2xl text-saddle-brown">
               {editingId ? "Edit Category" : "Add New Category"}
@@ -324,25 +318,14 @@ export default function AdminCategories() {
                   <option value="project">Project</option>
                </select>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-                 <div className="grid gap-2">
-                    <Label htmlFor="level">Level</Label>
-                    <Input 
-                        id="level" 
-                        type="number" 
-                        value={formData.level} 
-                        onChange={(e) => setFormData({...formData, level: parseInt(e.target.value) || 0})}
-                    />
-                 </div>
-                 <div className="grid gap-2">
-                    <Label htmlFor="order">Order</Label>
-                    <Input 
-                        id="order" 
-                        type="number" 
-                        value={formData.order} 
-                        onChange={(e) => setFormData({...formData, order: parseInt(e.target.value) || 0})}
-                    />
-                 </div>
+            <div className="grid gap-2">
+                 <Label htmlFor="order">Order</Label>
+                 <Input 
+                     id="order" 
+                     type="number" 
+                     value={formData.order} 
+                     onChange={(e) => setFormData({...formData, order: parseInt(e.target.value) || 0})}
+                 />
             </div>
              <div className="flex items-center space-x-4 mt-2">
                 <div className="flex items-center space-x-2">
