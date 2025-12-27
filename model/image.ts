@@ -13,6 +13,7 @@ export interface IImage extends Document {
   isThumbnail?: boolean;
   isCategoryCard?: boolean;
   isProjectCard?: boolean;
+  isProductCard?: boolean;
   relatedCategory?: mongoose.Types.ObjectId;
   relatedProduct?: mongoose.Types.ObjectId;
   relatedProject?: mongoose.Types.ObjectId;
@@ -62,6 +63,7 @@ const ImageSchema: Schema<IImage> = new Schema(
     isThumbnail: { type: Boolean, default: false },
     isCategoryCard: { type: Boolean, default: false },
     isProjectCard: { type: Boolean, default: false },
+    isProductCard: { type: Boolean, default: false },
     relatedCategory: { type: Schema.Types.ObjectId, ref: "Category" },
     relatedProduct: { type: Schema.Types.ObjectId, ref: "Product" },
     relatedProject: { type: Schema.Types.ObjectId, ref: "Project" },

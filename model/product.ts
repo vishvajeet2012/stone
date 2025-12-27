@@ -30,6 +30,7 @@ export interface IProduct extends Document {
   }[];
   similarStyles: mongoose.Types.ObjectId[];
   isFeatured: boolean;
+  isActive: boolean;
   menuOrder?: number;
   createdAt: Date;
   updatedAt: Date;
@@ -91,6 +92,7 @@ const ProductSchema: Schema<IProduct> = new Schema(
     }],
     similarStyles: [{ type: Schema.Types.ObjectId, ref: "Product" }],
     isFeatured: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
     menuOrder: { type: Number, default: 0 },
   },
   { timestamps: true }

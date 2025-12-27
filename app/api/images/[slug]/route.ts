@@ -60,7 +60,31 @@ export async function DELETE(
     return NextResponse.json({ success: true, message: "Image deleted" });
 
   } catch (error) {
-    console.error("Failed to delete image:", error);
     return NextResponse.json({ error: "Failed to delete image" }, { status: 500 });
+  }
+}
+
+export async function PUT(
+  req: Request,
+  props: { params: Promise<{ slug: string }> }
+) {
+  try {
+    await verifyAdmin();
+    const params = await props.params;
+    await dbConnect();
+    const { slug } = params;
+    const body = await req.json();
+
+    const image = await ImageModel.findOneAndUpdate({ slug }, body, { new: true });
+
+    if (!image) {
+      return NextResponse.json({ error: "Image not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, data: image });
+
+  } catch (error) {
+    console.error("Failed to update image:", error);
+    return NextResponse.json({ error: "Failed to update image" }, { status: 500 });
   }
 }

@@ -5,8 +5,9 @@ import { api } from "@/Components/ApiHooks";
 import { IProduct } from "@/model/product";
 import { ICategory } from "@/model/category";
 import { Button } from "@/Components/ui/button";
-import { Plus, Pencil, Trash2, Loader2, Search } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Search, Star } from "lucide-react";
 import { toast } from "sonner";
+import Image from "next/image";
 import {
   Table,
   TableBody,
@@ -40,7 +41,9 @@ export default function AdminProducts() {
     slug: "",
     description: "",
     category: "",
+    category: "",
     isFeatured: false,
+    isActive: true,
     menuOrder: 0,
     specs: [] as { label: string; value: string }[],
     technicalSpecifications: {
@@ -61,6 +64,7 @@ export default function AdminProducts() {
     trims: [] as { name: string; dimensions: string; sku: string }[],
   });
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<any[]>([]);
 
   const fetchData = async () => {
     try {
@@ -89,6 +93,7 @@ export default function AdminProducts() {
             description: product.description,
             category: typeof product.category === 'object' ? (product.category as any)._id.toString() : product.category as string,
             isFeatured: product.isFeatured || false,
+            isActive: product.isActive !== undefined ? product.isActive : true,
             menuOrder: product.menuOrder || 0,
             specs: product.specs || [],
             technicalSpecifications: {
@@ -108,6 +113,7 @@ export default function AdminProducts() {
             finishes: product.finishes?.map((f: any) => ({ name: f.name, description: f.description || "" })) || [],
             trims: product.trims?.map((t: any) => ({ name: t.name, dimensions: t.dimensions, sku: t.sku || "" })) || [],
         });
+        setExistingImages(product.images || []);
     } else {
         setEditingId(null);
         setFormData({
@@ -116,6 +122,7 @@ export default function AdminProducts() {
             description: "",
             category: categories.length > 0 ? (categories[0]._id as any).toString() : "",
             isFeatured: false,
+            isActive: true,
             menuOrder: 0,
             specs: [],
             technicalSpecifications: {
@@ -135,6 +142,7 @@ export default function AdminProducts() {
             finishes: [],
             trims: [],
         });
+        setExistingImages([]);
     }
     setSelectedImages([]);
     setIsDialogOpen(true);
@@ -217,6 +225,7 @@ export default function AdminProducts() {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Featured</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -240,6 +249,11 @@ export default function AdminProducts() {
                     <TableCell className="font-medium">{product.name}</TableCell>
                     <TableCell>
                         {typeof product.category === 'object' && (product.category as any).name ? (product.category as any).name : 'N/A'}
+                    </TableCell>
+                    <TableCell>
+                        <span className={`px-2 py-1 rounded-full text-xs ${product.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                            {product.isActive ? 'Active' : 'Inactive'}
+                        </span>
                     </TableCell>
                     <TableCell>{product.isFeatured ? "Yes" : "No"}</TableCell>
                     <TableCell className="text-right">
@@ -306,15 +320,27 @@ export default function AdminProducts() {
                 </select>
             </div>
 
-            <div className="flex items-center space-x-2">
-                <input
-                    type="checkbox"
-                    id="isFeatured"
-                    className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
-                    checked={formData.isFeatured}
-                    onChange={(e) => setFormData({...formData, isFeatured: e.target.checked})}
-                />
-                <Label htmlFor="isFeatured">Featured Product</Label>
+            <div className="flex gap-6">
+                <div className="flex items-center space-x-2">
+                    <input
+                        type="checkbox"
+                        id="isFeatured"
+                        className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
+                        checked={formData.isFeatured}
+                        onChange={(e) => setFormData({...formData, isFeatured: e.target.checked})}
+                    />
+                    <Label htmlFor="isFeatured">Featured Product</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <input
+                        type="checkbox"
+                        id="isActive"
+                        className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
+                        checked={formData.isActive}
+                        onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                    />
+                    <Label htmlFor="isActive">Active</Label>
+                </div>
             </div>
 
             <div className="grid gap-2">
@@ -408,9 +434,59 @@ export default function AdminProducts() {
                 ))}
             </div>
 
-            {/* Product Images */}
             <div className="space-y-2">
                 <Label>Product Images</Label>
+                <div className="grid grid-cols-4 gap-4 mb-4">
+                    {existingImages.map((img: any) => (
+                        <div key={img._id} className="relative aspect-square rounded-lg overflow-hidden border border-stone-200 group">
+                             <Image 
+                                src={img.url || (img.slug ? `/api/images/${img.slug}` : "/placeholder.jpg")} 
+                                alt="Existing product image"
+                                fill
+                                className="object-cover"
+                             />
+                             <button
+                                type="button"
+                                onClick={async () => {
+                                    // Optimistic update
+                                    const newImages = existingImages.map(i => ({
+                                        ...i, 
+                                        isProductCard: i._id === img._id
+                                    }));
+                                    setExistingImages(newImages);
+                                    
+                                    // API call: Unset others, set this one
+                                    // For simplicity, we just set this one true. Backend logic usually handles unique if enforced, 
+                                    // but since we rely on manual toggle, we loop nicely.
+                                    try {
+                                        await Promise.all(existingImages.map(i => 
+                                            fetch(`/api/images/${i.slug}`, { 
+                                                method: 'PUT', 
+                                                body: JSON.stringify({ isProductCard: i._id === img._id })
+                                            })
+                                        ));
+                                        toast.success("Card Image Updated");
+                                    } catch (err) {
+                                        toast.error("Failed to update card image");
+                                        fetchData(); // Revert on error
+                                    }
+                                }}
+                                className={`absolute top-2 right-2 p-1 rounded-full bg-white/80 transition-colors ${img.isProductCard ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
+                             >
+                                <Star fill={img.isProductCard ? "currentColor" : "none"} className="w-5 h-5" />
+                             </button>
+                        </div>
+                    ))}
+                    {selectedImages.map((file, i) => (
+                        <div key={`new-${i}`} className="relative aspect-square rounded-lg overflow-hidden border border-stone-200">
+                             <img 
+                                src={URL.createObjectURL(file)} 
+                                alt="New preview"
+                                className="w-full h-full object-cover"
+                             />
+                        </div>
+                    ))}
+                </div>
                 <Input 
                     type="file" 
                     accept="image/*" 
@@ -419,7 +495,7 @@ export default function AdminProducts() {
                 />
                 <p className="text-xs text-gray-500">You can select multiple images. Existing images will be preserved if left blank.</p>
                 {selectedImages.length > 0 && (
-                    <p className="text-xs text-green-600">{selectedImages.length} image(s) selected</p>
+                    <p className="text-xs text-green-600">{selectedImages.length} new image(s) selected</p>
                 )}
             </div>
 
