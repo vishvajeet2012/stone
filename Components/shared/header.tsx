@@ -24,6 +24,24 @@ const megaMenuData = [
     ]
   },
   {
+    id: "stone-collection",
+    label: "Stone Collection",
+    columns: [
+      {
+        title: "Natural Stones",
+        items: [
+          { label: "Sandstone", href: "/category/sandstone" },
+          { label: "Granite", href: "/category/granite" },
+          { label: "Marble", href: "/category/marble" },
+          { label: "Basalt", href: "/category/basalt" },
+          { label: "Slate", href: "/category/slate" },
+          { label: "Limestone", href: "/category/limestone" },
+          { label: "Quartz", href: "/category/quartz" }
+        ]
+      }
+    ]
+  },
+  {
     id: "exotic-colors",
     label: "Exotic Colors",
     columns: [
@@ -146,6 +164,7 @@ export default function Header() {
           <div className="flex items-center gap-8 text-[13px] font-bold text-modern-earthy tracking-tight">
             {[
               { label: "Products", id: "products" },
+              { label: "Stone Collection", id: "stone-collection" },
               { label: "Exotic Colors", id: "exotic-colors" },
               { label: "Artisan Excellence & Services", id: "artisan-excellence" },
               { label: "Projects", id: "projects" },
