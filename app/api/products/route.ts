@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Product from "@/model/product";
+import Category from "@/model/category";
 import ImageModel from "@/model/image";
 import { slugify } from "@/lib/utils";
 import { menuCache, CACHE_KEYS } from "@/lib/cache";
@@ -10,6 +11,7 @@ export async function GET(req: Request) {
     await dbConnect();
     const { searchParams } = new URL(req.url);
     const categoryId = searchParams.get('category');
+    const withCategories = searchParams.get('withCategories') === 'true';
     
     const filter = categoryId ? { category: categoryId } : {};
     const products = await Product.find(filter)
@@ -17,6 +19,22 @@ export async function GET(req: Request) {
       .populate('images')
       .populate('finishes.image')
       .populate('trims.image');
+    
+    // If withCategories is true, also fetch categories (for admin page)
+    if (withCategories) {
+      const categories = await Category.find().sort({ order: 1 })
+        .populate('images')
+        .populate('BannerImages');
+      
+      return NextResponse.json(
+        { success: true, data: { products, categories } },
+        {
+          headers: {
+            'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600',
+          },
+        }
+      );
+    }
     
     // Cache for 5 minutes, allow stale-while-revalidate for 1 hour
     return NextResponse.json(

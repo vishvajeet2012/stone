@@ -11,6 +11,10 @@ export const api = {
       const { data } = await axios.get<{ success: boolean; data: IProduct[] }>(`${API_BASE}/products`);
       return data.data;
     },
+    getAllWithCategories: async () => {
+      const { data } = await axios.get<{ success: boolean; data: { products: IProduct[]; categories: ICategory[] } }>(`${API_BASE}/products?withCategories=true`);
+      return data.data;
+    },
     getOne: async (slug: string) => {
       const { data } = await axios.get<{ success: boolean; data: IProduct }>(`${API_BASE}/products/${slug}`);
       return data.data;

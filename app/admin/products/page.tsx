@@ -55,10 +55,8 @@ export default function AdminProducts() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [productsData, categoriesData] = await Promise.all([
-        api.products.getAll(),
-        api.categories.getAll(),
-      ]);
+      // Single API call that returns both products and categories
+      const { products: productsData, categories: categoriesData } = await api.products.getAllWithCategories();
       setProducts(productsData);
       setCategories(categoriesData);
     } catch (_error) {
