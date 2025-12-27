@@ -1,9 +1,13 @@
 ﻿"use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { MapPin, Phone, Mail } from "lucide-react";
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 export default function ContactUs() {
+  const [phone, setPhone] = useState<string | undefined>();
+
   return (
     <section className="w-full bg-warm-cream py-20 px-4 md:px-8 relative overflow-hidden">
         {/* Background Decorative Element - Right */}
@@ -79,6 +83,49 @@ export default function ContactUs() {
                         <input type="email" className="w-full bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus:outline-hidden focus:border-saddle-brown transition-colors" placeholder="john@example.com" />
                     </div>
                 </div>
+
+                <div className="space-y-2">
+                    <label className="text-sm font-bold text-saddle-brown uppercase tracking-wider">Phone Number</label>
+                    <div className="phone-input-container">
+                        <PhoneInput
+                            placeholder="Enter phone number"
+                            value={phone}
+                            onChange={setPhone}
+                            defaultCountry="IN"
+                            international
+                            countryCallingCodeEditable={false} 
+                            className="bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus-within:border-saddle-brown transition-colors"
+                        />
+                    </div>
+                     <style jsx global>{`
+
+                        .PhoneInputInput {
+                            background-color: transparent;
+                            border: none;
+                            outline: none;
+                            color: inherit;
+                            font-size: 1rem;
+                        }
+                        .PhoneInputCountryIcon {
+                            width: 24px;
+                            height: 18px;
+                        }
+                        .PhoneInputCountryIconImg {
+                            display: block; /* Ensure it's visible */
+                            width: 100%;
+                            height: 100%;
+                        }
+                        .PhoneInputCountrySelect {
+                            background-color: transparent;
+                            color: black;
+                        }
+                        /* Custom arrow styling if needed, or default */
+                        .PhoneInputCountrySelectArrow {
+                            color: #8B4513;
+                            opacity: 0.7;
+                        }
+                     `}</style>
+                </div>
                 
                 <div className="space-y-2">
                     <label className="text-sm font-bold text-saddle-brown uppercase tracking-wider">Subject</label>
@@ -105,4 +152,3 @@ export default function ContactUs() {
     </section>
   );
 }
-
