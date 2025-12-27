@@ -14,6 +14,7 @@ export interface IImage extends Document {
   isCategoryCard?: boolean;
   isProjectCard?: boolean;
   isProductCard?: boolean;
+  label?: string; // Dynamic label like "Detail", "View in Room"
   relatedCategory?: mongoose.Types.ObjectId;
   relatedProduct?: mongoose.Types.ObjectId;
   relatedProject?: mongoose.Types.ObjectId;
@@ -64,6 +65,7 @@ const ImageSchema: Schema<IImage> = new Schema(
     isCategoryCard: { type: Boolean, default: false },
     isProjectCard: { type: Boolean, default: false },
     isProductCard: { type: Boolean, default: false },
+    label: { type: String, trim: true }, // Dynamic label for image thumbnails
     relatedCategory: { type: Schema.Types.ObjectId, ref: "Category" },
     relatedProduct: { type: Schema.Types.ObjectId, ref: "Product" },
     relatedProject: { type: Schema.Types.ObjectId, ref: "Project" },

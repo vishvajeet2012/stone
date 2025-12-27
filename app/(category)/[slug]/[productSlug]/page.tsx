@@ -60,10 +60,13 @@ export default function ProductDetailPage() {
     );
   }
 
-  // Parse images
-  const mainImages = product.images?.map((img: any) => img.url ? img.url : `/api/images/${img.slug}`) || [];
+  // Parse images with labels
+  const imageData = product.images?.map((img: any) => ({
+    url: img.url ? img.url : `/api/images/${img.slug}`,
+    label: img.label || '' // Dynamic label from database
+  })) || [];
   // Fallback if no images
-  const displayImages = mainImages.length > 0 ? mainImages : ["/placeholder.jpg"];
+  const displayImages = imageData.length > 0 ? imageData : [{ url: "/placeholder.jpg", label: '' }];
 
   // Parse similar styles
   const similarStyles = product.similarStyles?.map((item: any) => ({
@@ -99,7 +102,7 @@ export default function ProductDetailPage() {
           <div className="lg:col-span-7 flex flex-col md:flex-row gap-4">
             
             <div className="hidden md:flex flex-col gap-4 w-24 shrink-0">
-               {displayImages.map((img: string, idx: number) => (
+               {displayImages.map((img: { url: string; label: string }, idx: number) => (
                  <button 
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
@@ -110,14 +113,17 @@ export default function ProductDetailPage() {
                  >
                    <div className="relative w-full h-full bg-warm-cream">
                      <Image 
-                        src={img} 
+                        src={img.url} 
                         alt={`Thumbnail ${idx + 1}`}
                         fill
                         className="object-cover"
                      />
                    </div>
-                   {idx === 0 && <div className="absolute bottom-0 left-0 w-full bg-modern-earthy/90 text-warm-cream text-[10px] py-1 text-center uppercase">Detail</div>}
-                   {idx === 1 && <div className="absolute bottom-0 left-0 w-full bg-modern-earthy/90 text-warm-cream text-[10px] py-1 text-center uppercase leading-tight">View in Room</div>}
+                   {img.label && (
+                     <div className="absolute bottom-0 left-0 w-full bg-modern-earthy/90 text-warm-cream text-[10px] py-1 text-center uppercase leading-tight">
+                       {img.label}
+                     </div>
+                   )}
                  </button>
                ))}
             </div>
@@ -132,7 +138,7 @@ export default function ProductDetailPage() {
                      
                      <div className="absolute inset-0">
                         <Image 
-                          src={displayImages[selectedImage]} 
+                          src={displayImages[selectedImage].url} 
                           alt={product.name} 
                           fill
                           className="object-cover transition-all duration-500"
@@ -293,7 +299,7 @@ export default function ProductDetailPage() {
                 </button>
                 <div className="relative w-full h-full max-w-7xl max-h-[90vh]">
                      <Image
-                        src={displayImages[selectedImage]}
+                        src={displayImages[selectedImage].url}
                         alt="Expanded View"
                         fill
                         className="object-contain"
