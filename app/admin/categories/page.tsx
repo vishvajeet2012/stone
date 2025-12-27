@@ -6,14 +6,15 @@ import { ICategory } from "@/model/category";
 import { Button } from "@/Components/ui/button";
 import { Plus, Pencil, Trash2, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
+
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/Components/ui/table";
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/Components/ui/card";
+import { Badge } from "@/Components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -42,8 +43,11 @@ export default function AdminCategories() {
     order: 0,
     showInMenu: true,
   });
+
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedBanner, setSelectedBanner] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewBanner, setPreviewBanner] = useState<string | null>(null);
 
   const fetchCategories = async () => {
     try {
@@ -73,6 +77,13 @@ export default function AdminCategories() {
         order: category.order || 0,
         showInMenu: category.showInMenu ?? true,
       });
+      // Set initial previews from existing data
+      const img: any = category.images?.[0];
+      setPreviewImage(img?.slug ? `/api/images/${img.slug}` : null);
+      
+      const banner: any = category.BannerImages?.[0];
+      setPreviewBanner(banner?.slug ? `/api/images/${banner.slug}` : null);
+
     } else {
       setEditingId(null);
       setFormData({
@@ -84,6 +95,8 @@ export default function AdminCategories() {
         order: 0,
         showInMenu: true,
       });
+      setPreviewImage(null);
+      setPreviewBanner(null);
     }
     setSelectedImage(null);
     setSelectedBanner(null);
@@ -174,50 +187,77 @@ export default function AdminCategories() {
         />
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
-        <Table>
-          <TableHeader className="bg-stone-50">
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Description</TableHead>
-               <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-                <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">
-                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-saddle-brown" />
-                    </TableCell>
-                </TableRow>
-            ) : categories.filter(c => c.name.toLowerCase().includes(search.toLowerCase())).length === 0 ? (
-                 <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center text-gray-500">
-                        No categories found.
-                    </TableCell>
-                </TableRow>
-            ) : (
-                categories.filter(c => c.name.toLowerCase().includes(search.toLowerCase())).map((category) => (
-                <TableRow key={category._id.toString()}>
-                    <TableCell className="font-medium">{category.name}</TableCell>
-                    <TableCell className="text-gray-500">{category.slug}</TableCell>
-                    <TableCell className="max-w-xs truncate">{category.description}</TableCell>
-                    <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(category)}>
-                            <Pencil className="h-4 w-4 text-blue-600" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-700 hover:bg-red-50">
-                            <Trash2 className="h-4 w-4" />
-                        </Button>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loading ? (
+             <div className="col-span-full flex justify-center py-12">
+                <Loader2 className="h-8 w-8 animate-spin text-saddle-brown" />
+             </div>
+        ) : categories.filter(c => c.name.toLowerCase().includes(search.toLowerCase())).length === 0 ? (
+             <div className="col-span-full text-center py-12 text-gray-500">
+                No categories found.
+             </div>
+        ) : (
+            categories.filter(c => c.name.toLowerCase().includes(search.toLowerCase())).map((category) => (
+                <Card key={category._id.toString()} className="flex flex-col overflow-hidden hover:shadow-md transition-shadow">
+                    <div className="relative h-48 w-full bg-stone-100">
+                        {(category.images?.[0] as any)?.slug ? (
+                            <img 
+                                src={`/api/images/${(category.images[0] as any).slug}`} 
+                                alt={category.name} 
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                <span className="text-sm">No Image</span>
+                            </div>
+                        )}
+                         <div className="absolute top-2 right-2 flex gap-1">
+                             <Badge variant={category.showInMenu ? "default" : "secondary"} className="bg-white/90 text-saddle-brown hover:bg-white">
+                                {category.showInMenu ? "Menu: Visible" : "Menu: Hidden"}
+                             </Badge>
+                         </div>
                     </div>
-                    </TableCell>
-                </TableRow>
-                ))
-            )}
-          </TableBody>
-        </Table>
+                    
+                    <CardHeader className="pb-2">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <CardTitle className="text-xl font-playfair text-saddle-brown">{category.name}</CardTitle>
+                                <p className="text-xs text-gray-400 font-mono mt-1">{category.slug}</p>
+                            </div>
+                            <Badge variant="outline" className="capitalize">{category.type}</Badge>
+                        </div>
+                    </CardHeader>
+                    
+                    <CardContent className="flex-grow">
+                        <div className="space-y-2 text-sm text-gray-600">
+                            {category.description && (
+                                <p className="line-clamp-3 mb-4">{category.description}</p>
+                            )}
+                            
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                                <div className="flex flex-col">
+                                    <span className="text-gray-400">Level</span>
+                                    <span className="font-medium">{category.level}</span>
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-gray-400">Order</span>
+                                    <span className="font-medium">{category.order}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </CardContent>
+
+                    <CardFooter className="pt-2 border-t border-stone-100 bg-stone-50/50 flex justify-end gap-2">
+                        <Button variant="ghost" size="sm" onClick={() => handleOpenDialog(category)} className="hover:text-blue-600 hover:bg-blue-50">
+                            <Pencil className="h-4 w-4 mr-1" /> Edit
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700 hover:bg-red-50">
+                            <Trash2 className="h-4 w-4 mr-1" /> Delete
+                        </Button>
+                    </CardFooter>
+                </Card>
+            ))
+        )}
       </div>
       
        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -300,15 +340,49 @@ export default function AdminCategories() {
               />
             </div>
             
-             {/* Image Upload Placeholders - Implementation needed */}
+             {/* Image Upload Placeholders */}
             <div className="grid grid-cols-2 gap-4">
                  <div className="space-y-2">
                     <Label>Main Image</Label>
-                    <Input type="file" accept="image/*" onChange={(e) => setSelectedImage(e.target.files?.[0] || null)} />
+                    <div className="flex flex-col gap-2">
+                        {previewImage && (
+                            <div className="relative w-full h-32 bg-stone-100 rounded-lg overflow-hidden border border-stone-200">
+                                <img src={previewImage} alt="Preview" className="w-full h-full object-cover" />
+                            </div>
+                        )}
+                        <Input 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    setSelectedImage(file);
+                                    setPreviewImage(URL.createObjectURL(file));
+                                }
+                            }} 
+                        />
+                    </div>
                  </div>
                   <div className="space-y-2">
                     <Label>Banner Image</Label>
-                    <Input type="file" accept="image/*" onChange={(e) => setSelectedBanner(e.target.files?.[0] || null)} />
+                    <div className="flex flex-col gap-2">
+                        {previewBanner && (
+                            <div className="relative w-full h-32 bg-stone-100 rounded-lg overflow-hidden border border-stone-200">
+                                <img src={previewBanner} alt="Banner Preview" className="w-full h-full object-cover" />
+                            </div>
+                        )}
+                        <Input 
+                            type="file" 
+                            accept="image/*" 
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                    setSelectedBanner(file);
+                                    setPreviewBanner(URL.createObjectURL(file));
+                                }
+                            }} 
+                        />
+                    </div>
                  </div>
             </div>
 

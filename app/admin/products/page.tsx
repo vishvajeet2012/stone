@@ -33,6 +33,8 @@ export default function AdminProducts() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Form State
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: "",
     slug: "",
@@ -70,7 +72,7 @@ export default function AdminProducts() {
             name: product.name,
             slug: product.slug,
             description: product.description,
-            category: typeof product.category === 'object' ? (product.category as any)._id : product.category,
+            category: typeof product.category === 'object' ? (product.category as any)._id.toString() : product.category as string,
             isFeatured: product.isFeatured || false,
             specs: product.specs || [],
         });
@@ -80,7 +82,7 @@ export default function AdminProducts() {
             name: "",
             slug: "",
             description: "",
-            category: categories.length > 0 ? (categories[0]._id as string) : "",
+            category: categories.length > 0 ? (categories[0]._id as any).toString() : "",
             isFeatured: false,
             specs: [],
         });
