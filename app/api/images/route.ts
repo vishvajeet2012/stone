@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import ImageModel from "@/model/image";
 import { slugify } from "@/lib/utils";
-
+import { uploadToCloudinary } from "@/lib/cloudinary";
 import { verifyAdmin } from "@/lib/auth-server";
 
 export async function POST(req: Request) {
@@ -26,14 +26,22 @@ export async function POST(req: Request) {
     const isCategoryCard = formData.get("isCategoryCard") === "true";
     const isProjectCard = formData.get("isProjectCard") === "true";
 
+    // Upload to Cloudinary
+    const cloudinaryResult = await uploadToCloudinary(buffer, {
+      folder: "stone-app",
+      public_id: slug,
+    });
+
     const newImage = await ImageModel.create({
       filename,
       slug,
       contentType,
       size: file.size,
-      data: buffer,
-      provider: "local-db",
-      url: `/api/images/${slug}`,
+      url: cloudinaryResult.secure_url,
+      publicId: cloudinaryResult.public_id,
+      provider: "cloudinary",
+      width: cloudinaryResult.width,
+      height: cloudinaryResult.height,
       isThumbnail,
       isCategoryCard,
       isProjectCard,
@@ -47,17 +55,20 @@ export async function POST(req: Request) {
       _id: newImage._id
     }, { status: 201 });
 
-  } catch (_error) {
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Upload failed:", error?.message || error);
+    console.error("Full error:", JSON.stringify(error, null, 2));
+    return NextResponse.json({ error: "Upload failed", details: error?.message }, { status: 500 });
   }
 }
 
-export async function GET(_req: Request) {
+export async function GET() {
     try {
         await dbConnect();
-        const images = await ImageModel.find({}, 'slug filename url contentType size createdAt');
+        const images = await ImageModel.find({}, 'slug filename url contentType size createdAt width height');
         return NextResponse.json({ success: true, data: images });
-    } catch (_error) {
+    } catch (error) {
+        console.error("Failed to fetch images:", error);
         return NextResponse.json({ error: "Failed to fetch images" }, { status: 500 });
     }
 }

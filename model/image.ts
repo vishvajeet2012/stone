@@ -5,9 +5,11 @@ export interface IImage extends Document {
   slug: string;
   contentType: string;
   size: number;
-  data: Buffer;
-  url?: string;
-  provider: "local-db" | "s3";
+  url: string; // Cloudinary URL
+  publicId: string; // Cloudinary public_id for deletion
+  provider: "cloudinary" | "s3";
+  width?: number;
+  height?: number;
   isThumbnail?: boolean;
   isCategoryCard?: boolean;
   isProjectCard?: boolean;
@@ -42,20 +44,21 @@ const ImageSchema: Schema<IImage> = new Schema(
       type: Number,
       required: true,
     },
-    data: {
-      type: Buffer,
-      required: function (this: IImage) {
-        return this.provider === "local-db";
-      },
-    },
     url: {
       type: String,
+      required: true,
+    },
+    publicId: {
+      type: String,
+      required: true,
     },
     provider: {
       type: String,
-      enum: ["local-db", "s3"],
-      default: "local-db",
+      enum: ["cloudinary", "s3"],
+      default: "cloudinary",
     },
+    width: { type: Number },
+    height: { type: Number },
     isThumbnail: { type: Boolean, default: false },
     isCategoryCard: { type: Boolean, default: false },
     isProjectCard: { type: Boolean, default: false },
