@@ -28,15 +28,61 @@ const megaMenuData = [
     label: "Stone Collection",
     columns: [
       {
-        title: "Natural Stones",
+        title: "Sandstone",
         items: [
-          { label: "Sandstone", href: "/category/sandstone" },
-          { label: "Granite", href: "/category/granite" },
-          { label: "Marble", href: "/category/marble" },
-          { label: "Basalt", href: "/category/basalt" },
-          { label: "Slate", href: "/category/slate" },
-          { label: "Limestone", href: "/category/limestone" },
-          { label: "Quartz", href: "/category/quartz" }
+          { label: "Mint White", href: "/category/sandstone/mint-white" },
+          { label: "Kandla Grey", href: "/category/sandstone/kandla-grey" },
+          { label: "Raj Green", href: "/category/sandstone/raj-green" },
+          { label: "Teakwood", href: "/category/sandstone/teakwood" },
+          { label: "Rainbow", href: "/category/sandstone/rainbow" },
+          { label: "Modak", href: "/category/sandstone/modak" }
+        ]
+      },
+      {
+        title: "Limestone",
+        items: [
+          { label: "Kota Blue", href: "/category/limestone/kota-blue" },
+          { label: "Kota Brown", href: "/category/limestone/kota-brown" },
+          { label: "Tandur Yellow", href: "/category/limestone/tandur-yellow" },
+          { label: "Kadappa Black", href: "/category/limestone/kadappa-black" }
+        ]
+      },
+      {
+        title: "Granite",
+        items: [
+          { label: "Black Galaxy", href: "/category/granite/black-galaxy" },
+          { label: "Tan Brown", href: "/category/granite/tan-brown" },
+          { label: "Rajasthan Black", href: "/category/granite/rajasthan-black" },
+          { label: "Chima Pink", href: "/category/granite/chima-pink" },
+          { label: "Crystal Yellow", href: "/category/granite/crystal-yellow" }
+        ]
+      },
+      {
+        title: "Marble",
+        items: [
+          { label: "Forest Green", href: "/category/marble/forest-green" },
+          { label: "Rain Forest", href: "/category/marble/rain-forest" },
+          { label: "White Marble", href: "/category/marble/white-marble" },
+          { label: "Pink Marble", href: "/category/marble/pink-marble" },
+          { label: "Katni Marble", href: "/category/marble/katni-marble" }
+        ]
+      },
+      {
+        title: "Slate",
+        items: [
+          { label: "Jack Black", href: "/category/slate/jack-black" },
+          { label: "Copper", href: "/category/slate/copper" },
+          { label: "Multi-Color", href: "/category/slate/multi-color" },
+          { label: "Silver Shine", href: "/category/slate/silver-shine" }
+        ]
+      },
+      {
+        title: "Basalt & Quartz",
+        items: [
+           { label: "Black Basalt", href: "/category/basalt/black-basalt" },
+           { label: "Grey Basalt", href: "/category/basalt/grey-basalt" },
+           { label: "White Quartz", href: "/category/quartz/white-quartz" },
+           { label: "Black Quartz", href: "/category/quartz/black-quartz" }
         ]
       }
     ]
@@ -96,19 +142,25 @@ const megaMenuData = [
 export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
 
   const currentCategoryData = megaMenuData.find(c => c.id === activeCategory);
 
   const handleMouseEnter = (link: string) => {
     const categoryId = link.toLowerCase();
-    const hasMegaMenu = megaMenuData.some(c => c.id === categoryId);
+    const category = megaMenuData.find(c => c.id === categoryId);
     
-    if (hasMegaMenu) {
+    if (category) {
       setActiveCategory(categoryId);
       setIsMegaMenuOpen(true);
+      // Default to the first column (e.g., "Sandstone" for Stone Collection)
+      if (category.columns.length > 0) {
+        setActiveSubCategory(category.columns[0].title);
+      }
     } else {
       setIsMegaMenuOpen(false);
       setActiveCategory(null);
+      setActiveSubCategory(null);
     }
   };
 
@@ -190,7 +242,7 @@ export default function Header() {
             <span>ENG</span>
           </div>
 
-          {/* Mega Menu Overlay */}
+      {/* Mega Menu Overlay */}
           <AnimatePresence>
             {isMegaMenuOpen && currentCategoryData && (
                 <motion.div 
@@ -200,51 +252,67 @@ export default function Header() {
                     transition={{ duration: 0.2 }}
                     className="absolute top-full left-0 w-full bg-warm-cream shadow-2xl rounded-b-xl border-t border-saddle-brown/10 overflow-hidden flex min-h-[300px] z-50"
                 >
-                    {/* Left Sidebar - simplified for Company/Projects */}
+                    {/* Left Sidebar - Navigation for Categories */}
                     <div className="w-1/4 bg-saddle-brown/5 border-r border-saddle-brown/10 py-8">
                         <div className="px-6 mb-4">
-                            <h4 className="text-saddle-brown/40 text-xs font-bold uppercase tracking-widest mb-4">Explore</h4>
+                            <h4 className="text-saddle-brown/40 text-xs font-bold uppercase tracking-widest mb-4">
+                                {currentCategoryData.label}
+                            </h4>
                         </div>
                         <ul className="space-y-1">
-                             <li key={currentCategoryData.id}>
-                                <div 
-                                    className="w-full text-left px-6 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-between group bg-warm-cream text-saddle-brown border-l-4 border-saddle-brown shadow-sm"
-                                >
-                                    <span className="max-w-[85%] leading-relaxed">{currentCategoryData.label}</span>
-                                    <ChevronRight className="w-4 h-4 text-saddle-brown" />
-                                </div>
-                            </li>
+                             {currentCategoryData.columns.map((col, idx) => (
+                                <li key={idx}>
+                                    <button 
+                                        onMouseEnter={() => setActiveSubCategory(col.title)}
+                                        onClick={() => setActiveSubCategory(col.title)}
+                                        className={cn(
+                                            "w-full text-left px-6 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-between group transition-all duration-200",
+                                            activeSubCategory === col.title 
+                                                ? "bg-warm-cream text-saddle-brown border-l-4 border-saddle-brown shadow-sm"
+                                                : "text-saddle-brown/60 hover:text-saddle-brown hover:bg-saddle-brown/5 border-l-4 border-transparent"
+                                        )}
+                                    >
+                                        <span className="max-w-[85%] leading-relaxed">{col.title}</span>
+                                        {activeSubCategory === col.title && <ChevronRight className="w-4 h-4 text-saddle-brown" />}
+                                    </button>
+                                </li>
+                             ))}
                         </ul>
                     </div>
 
                     {/* Right Content Area */}
                     <div className="w-3/4 p-10 bg-warm-cream overflow-y-auto">
-                         <div className="mb-8">
-                             <h3 className="text-xl font-playfair font-bold text-saddle-brown uppercase tracking-tight">
-                                 {currentCategoryData.label}
+                         <div className="mb-8 border-b border-saddle-brown/10 pb-4">
+                             <h3 className="text-2xl font-playfair font-bold text-saddle-brown uppercase tracking-tight">
+                                 {activeSubCategory}
                              </h3>
                          </div>
-                         <div className="grid grid-cols-3 gap-x-8 gap-y-12">
-                             {currentCategoryData.columns.map((col, idx) => (
-                                 <div key={idx} className="space-y-4">
-                                     <h5 className="text-xs font-bold text-saddle-brown/60 uppercase tracking-widest border-b border-saddle-brown/10 pb-2">
-                                         {col.title}
-                                     </h5>
-                                     <ul className="space-y-2">
-                                         {col.items.map(item => (
-                                             <li key={item.label}>
-                                                 <Link 
-                                                    href={item.href} 
-                                                    className="text-sm font-medium text-modern-earthy/80 hover:text-saddle-brown hover:translate-x-1 transition-all block"
-                                                    onClick={() => { setIsMegaMenuOpen(false); setActiveCategory(null); }}
-                                                 >
-                                                     {item.label}
-                                                 </Link>
-                                             </li>
-                                         ))}
-                                     </ul>
-                                 </div>
-                             ))}
+                         
+                         {/* Grid for Active Subcategory Items */}
+                         <div>
+                             {currentCategoryData.columns.map((col, idx) => {
+                                 if (col.title !== activeSubCategory) return null;
+                                 return (
+                                     <div key={idx} className="animate-in fade-in slide-in-from-left-2 duration-300">
+                                         <ul className="grid grid-cols-3 gap-x-8 gap-y-4">
+                                             {col.items.map((item, itemIdx) => (
+                                                 <li key={itemIdx}>
+                                                     <Link 
+                                                        href={item.href} 
+                                                        className="group flex items-center gap-3 p-2 rounded-lg hover:bg-saddle-brown/5 transition-colors"
+                                                        onClick={() => { setIsMegaMenuOpen(false); setActiveCategory(null); }}
+                                                     >
+                                                         <div className="w-1.5 h-1.5 rounded-full bg-saddle-brown/20 group-hover:bg-saddle-brown transition-colors" />
+                                                         <span className="text-sm font-medium text-modern-earthy/80 group-hover:text-saddle-brown transition-colors">
+                                                             {item.label}
+                                                         </span>
+                                                     </Link>
+                                                 </li>
+                                             ))}
+                                         </ul>
+                                     </div>
+                                 );
+                             })}
                          </div>
                     </div>
                 </motion.div>

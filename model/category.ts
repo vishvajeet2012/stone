@@ -6,8 +6,12 @@ export interface ICategory extends Document {
   parentCategory?: mongoose.Types.ObjectId; 
   type: "stone" | "service" | "collection" | "project";
   description?: string;
-  image?: string;
+  images: mongoose.Types.ObjectId[];
+  BannerImages: mongoose.Types.ObjectId[]; 
   subCategories?: { label: string; href: string }[];
+  level?: number; 
+  order?: number;
+  showInMenu: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -38,14 +42,24 @@ const CategorySchema: Schema<ICategory> = new Schema(
       enum: ["stone", "service", "collection", "project"],
       default: "stone",
     },
-    description: { type: String, trim: true },
-    image: { type: String },
+    images: [{
+      type: Schema.Types.ObjectId,
+      ref: "Image",
+    }],
+    BannerImages: [{
+      type: Schema.Types.ObjectId,
+      ref: "Image",
+    }],
+    
     subCategories: [
       {
         label: { type: String, required: true },
         href: { type: String, required: true },
       },
     ],
+    level: { type: Number, default: 0 },
+    order: { type: Number, default: 0 },
+    showInMenu: { type: Boolean, default: true },
   },
   { timestamps: true }
 );
