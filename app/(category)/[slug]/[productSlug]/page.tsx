@@ -7,54 +7,83 @@ import {
   Facebook, 
   Twitter, 
   Layers, 
-  Maximize2
+  Maximize2,
+  Loader2
 } from "lucide-react";
 import { SimilarStyles } from "@/Components/SimilarStyles";
 import { Trims } from "@/Components/Trims";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { useParams } from "next/navigation";
 
 export default function ProductDetailPage() {
+  const params = useParams();
+  const productSlug = params?.productSlug as string;
+  
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("SPECS");
   const [selectedImage, setSelectedImage] = useState<number>(0);
 
-  const images = [
-    "/stoneBanner.jpg", 
-    "/stoneBanner2.jpg", 
-    "/Peacock-Pietra.webp"
-  ];
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        if (!productSlug) return;
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/products/${productSlug}`);
+        if (response.data.success) {
+          setProduct(response.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch product:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [productSlug]);
 
+  if (loading) {
+    return (
+        <div className="min-h-screen bg-warm-cream flex items-center justify-center">
+            <Loader2 className="w-8 h-8 animate-spin text-saddle-brown" />
+        </div>
+    );
+  }
 
+  if (!product) {
+    return (
+        <div className="min-h-screen bg-warm-cream flex items-center justify-center">
+            <p className="text-modern-earthy text-lg">Product not found</p>
+        </div>
+    );
+  }
 
-  const similarStyles = [
-    { id: "1", name: "Andover Blythe", image: "/stoneBanner.jpg", collection: "Wayne Parc" },
-    { id: "2", name: "Glenridge Reclaimed Oak", image: "/stoneBanner2.jpg", collection: "Wayne Parc" },
-    { id: "3", name: "Glenridge Aged Hickory", image: "/Peacock-Pietra.webp", collection: "Wayne Parc" },
-    { id: "4", name: "Katavia Reclaimed Oak", image: "/Leopard-.webp", collection: "Wayne Parc" },
-    { id: "5", name: "Wilmont Reclaimed Oak", image: "/stoneBanner.jpg", collection: "Wayne Parc" },
-    { id: "6", name: "Glenridge Jatoba", image: "/stoneBanner2.jpg", collection: "Wayne Parc" },
-  ];
+  // Parse images
+  const mainImages = product.images?.map((img: any) => img.url ? img.url : `/api/images/${img.slug}`) || [];
+  // Fallback if no images
+  const displayImages = mainImages.length > 0 ? mainImages : ["/placeholder.jpg"];
 
-  const trimItems = [
-    { id: "1", name: "Barnstorm - End Cap", dimensions: '1.5"x0.25"x94"', sku: "VTTBARSTO-EC", image: "/stoneBanner.jpg" },
-    { id: "2", name: "Barnstorm - Stair Tread", dimensions: '12"x1.25"x47.25"', sku: "VTTBARSTO-ST-EE", image: "/stoneBanner2.jpg" },
-    { id: "3", name: "Flush Stair Nose", dimensions: '2.75" x 0.75" x 94"', sku: "VTTBARSTO-FSN", image: "/Peacock-Pietra.webp" },
-    { id: "4", name: "Barnstorm - Flush Stairnose", dimensions: '2.75" x 0.75" x 94"', sku: "VTTBARSTO-FSN-EE", image: "/Leopard-.webp" },
-    { id: "5", name: "Barnstorm - Reducer", dimensions: '1.77"x0.345"x94"', sku: "VTTBARSTO-SR", image: "/stoneBanner.jpg" },
-    { id: "6", name: "Barnstorm - TL Molding", dimensions: '1.77"x0.28"x94"', sku: "VTTBARSTO-TL", image: "/stoneBanner2.jpg" },
-  ];
+  // Parse similar styles
+  const similarStyles = product.similarStyles?.map((item: any) => ({
+    id: item._id,
+    name: item.name,
+    image: item.images?.[0]?.url || (item.images?.[0]?.slug ? `/api/images/${item.images[0].slug}` : "/placeholder.jpg"),
+    // collection removed
+  })) || [];
 
-  const specs = [
-    { label: "SERIES NAME(S)", value: "Wayne Parc Reserve" },
-    { label: "PRIMARY COLOR(S)", value: "Blonde" },
-    { label: "THICKNESS", value: "12MM" },
-    { label: "STYLE", value: "Wood" },
-    { label: "WEAR LAYER", value: "30MIL" },
-    { label: "ENVIRONMENTAL", value: "Greenguard Gold, FloorScore, USGBC LEED Certified" },
-    { label: "RADIANT HEATING", value: "YES - See Installation Instructions for Details" },
-    { label: "ADDITIONAL RESOURCES", value: "Disclaimer" },
-  ];
+  // Parse trims
+  const trimItems = product.trims?.map((item: any, idx: number) => ({
+    id: item._id || idx,
+    name: item.name,
+    dimensions: item.dimensions,
+    // SKU removed
+    image: item.image?.url || (item.image?.slug ? `/api/images/${item.image.slug}` : "/placeholder.jpg")
+  })) || [];
+
+  // Parse finishes
+  const finishItems = product.finishes || [];
 
   return (
     <div className="min-h-screen bg-warm-cream font-lato text-modern-earthy pb-20">
@@ -70,7 +99,7 @@ export default function ProductDetailPage() {
           <div className="lg:col-span-7 flex flex-col md:flex-row gap-4">
             
             <div className="hidden md:flex flex-col gap-4 w-24 shrink-0">
-               {images.map((img, idx) => (
+               {displayImages.map((img: string, idx: number) => (
                  <button 
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
@@ -95,7 +124,6 @@ export default function ProductDetailPage() {
 
              <div className="flex-1 space-y-6">
                 <div className="relative w-full aspect-[4/3] bg-modern-earthy/20 overflow-hidden group">
-                     {/* Cleaned up overlay buttons */ }
                      <div className="absolute top-6 right-6 z-10">
                         <button className="bg-warm-cream/80 p-2 rounded-full hover:bg-warm-cream text-saddle-brown transition-colors">
                             <Heart className="w-6 h-6" />
@@ -104,8 +132,8 @@ export default function ProductDetailPage() {
                      
                      <div className="absolute inset-0">
                         <Image 
-                          src={images[selectedImage]} 
-                          alt="Stone Texture" 
+                          src={displayImages[selectedImage]} 
+                          alt={product.name} 
                           fill
                           className="object-cover transition-all duration-500"
                         />
@@ -130,16 +158,17 @@ export default function ProductDetailPage() {
              </div>
 
              <div className="space-y-4">
-                 <p className="text-sm leading-relaxed text-modern-earthy/80">
+                 <h1 className="text-3xl font-bold">{product.name}</h1>
+                 <div className="text-sm leading-relaxed text-modern-earthy/80">
                      <span className="font-bold">Description:</span><br/>
-                     Elwood&reg; luxury vinyl planks from the Wayne Parc Reserve&trade; Collection feature soft blonde hues with smooth variation and subtle knots brought to life through grain-aligned EIR embossing and an UltraMatte&trade; finish for a natural woodgrain finish. These 9&quot; x 72&quot; planks offer a 12mm thickness and a waterproof WPC core that delivers a warm, cushioned feel underfoot.
-                 </p>
+                     <p className="mt-2">{product.description}</p>
+                 </div>
              </div>
 
              <div className="border-t border-b border-modern-earthy/10 py-4">
                  <div className="flex items-center gap-2 text-saddle-brown cursor-pointer hover:underline">
                      <Layers className="w-4 h-4" />
-                     <span className="text-xs font-bold uppercase tracking-wider">See More From Wayner Parc Reserve™ Collection</span>
+                     <span className="text-xs font-bold uppercase tracking-wider">See More From {product.category?.name || "Category"}</span>
                  </div>
              </div>
 
@@ -161,9 +190,35 @@ export default function ProductDetailPage() {
 
                  {activeTab === "SPECS" && (
                      <div className="space-y-6 animate-in fade-in duration-300">
-                         <p className="text-xs italic text-modern-earthy/50">See technical specification sheets for more details</p>
                          <div className="grid grid-cols-2 gap-y-6 gap-x-4">
-                             {specs.map((spec, i) => (
+                             {/* Structured Tech Specs */}
+                             {product.technicalSpecifications?.seriesName && (
+                               <div><h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Series Name</h4><p className="text-sm font-medium text-modern-earthy">{product.technicalSpecifications.seriesName}</p></div>
+                             )}
+                             {product.technicalSpecifications?.primaryColor && (
+                               <div><h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Primary Color</h4><p className="text-sm font-medium text-modern-earthy">{product.technicalSpecifications.primaryColor}</p></div>
+                             )}
+                             {product.technicalSpecifications?.thickness && (
+                               <div><h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Thickness</h4><p className="text-sm font-medium text-modern-earthy">{product.technicalSpecifications.thickness}</p></div>
+                             )}
+                             {product.technicalSpecifications?.style && (
+                               <div><h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Style</h4><p className="text-sm font-medium text-modern-earthy">{product.technicalSpecifications.style}</p></div>
+                             )}
+                             {product.technicalSpecifications?.wearLayer && (
+                               <div><h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Wear Layer</h4><p className="text-sm font-medium text-modern-earthy">{product.technicalSpecifications.wearLayer}</p></div>
+                             )}
+                             {product.technicalSpecifications?.environmental && (
+                               <div><h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Environmental</h4><p className="text-sm font-medium text-modern-earthy">{product.technicalSpecifications.environmental}</p></div>
+                             )}
+                             {product.technicalSpecifications?.radiantHeating && (
+                               <div><h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Radiant Heating</h4><p className="text-sm font-medium text-modern-earthy">{product.technicalSpecifications.radiantHeating}</p></div>
+                             )}
+                             {product.technicalSpecifications?.additionalResources && (
+                               <div><h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Additional Resources</h4><p className="text-sm font-medium text-modern-earthy">{product.technicalSpecifications.additionalResources}</p></div>
+                             )}
+
+                             {/* Generic Specs */}
+                             {product.specs?.map((spec: any, i: number) => (
                                  <div key={i}>
                                      <h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">{spec.label}</h4>
                                      <p className="text-sm font-medium text-modern-earthy">{spec.value}</p>
@@ -177,13 +232,13 @@ export default function ProductDetailPage() {
                         <div className="grid grid-cols-2 gap-y-6 gap-x-4">
                             <div>
                                 <h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Flooring</h4>
-                                <p className="text-sm font-medium text-modern-earthy">Residential: Yes</p>
-                                <p className="text-sm font-medium text-modern-earthy">Commercial: Yes</p>
+                                <p className="text-sm font-medium text-modern-earthy">Residential: {product.applications?.flooring?.residential ? "Yes" : "No"}</p>
+                                <p className="text-sm font-medium text-modern-earthy">Commercial: {product.applications?.flooring?.commercial ? "Yes" : "No"}</p>
                             </div>
                             <div>
                                 <h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">Wall</h4>
-                                <p className="text-sm font-medium text-modern-earthy">Residential: Yes</p>
-                                <p className="text-sm font-medium text-modern-earthy">Commercial: No</p>
+                                <p className="text-sm font-medium text-modern-earthy">Residential: {product.applications?.wall?.residential ? "Yes" : "No"}</p>
+                                <p className="text-sm font-medium text-modern-earthy">Commercial: {product.applications?.wall?.commercial ? "Yes" : "No"}</p>
                             </div>
                         </div>
                     </div>
@@ -191,18 +246,27 @@ export default function ProductDetailPage() {
                  {activeTab === "FINISHES" && (
                     <div className="space-y-6 animate-in fade-in duration-300">
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <div className="aspect-square bg-modern-earthy/10 rounded-sm w-full relative">
-                                    <div className="absolute inset-0 flex items-center justify-center text-xs text-modern-earthy/30">Matte Finish</div>
+                            {finishItems.map((finish: any, idx: number) => (
+                                <div key={idx} className="space-y-2">
+                                    <div className="aspect-square bg-modern-earthy/10 rounded-sm w-full relative overflow-hidden">
+                                        {finish.image ? (
+                                             <Image 
+                                                src={finish.image.url || `/api/images/${finish.image.slug}`} 
+                                                alt={finish.name}
+                                                fill
+                                                className="object-cover"
+                                             />
+                                        ) : (
+                                            <div className="absolute inset-0 flex items-center justify-center text-xs text-modern-earthy/30">No Image</div>
+                                        )}
+                                    </div>
+                                    <p className="text-xs font-bold uppercase text-center">{finish.name}</p>
+                                    {finish.description && (
+                                        <p className="text-xs text-center text-modern-earthy/70">{finish.description}</p>
+                                    )}
                                 </div>
-                                <p className="text-xs font-bold uppercase text-center">UltraMatte™</p>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="aspect-square bg-modern-earthy/10 rounded-sm w-full relative">
-                                    <div className="absolute inset-0 flex items-center justify-center text-xs text-modern-earthy/30">Wood Grain</div>
-                                </div>
-                                <p className="text-xs font-bold uppercase text-center">EIR Embossed</p>
-                            </div>
+                            ))}
+                            {finishItems.length === 0 && <p className="col-span-2 text-sm text-modern-earthy/60">No finishes available</p>}
                         </div>
                     </div>
                  )}
@@ -212,10 +276,10 @@ export default function ProductDetailPage() {
 
         {/* Similar Styles & Trims Sections - Moved below main grid */}
         <div className="mt-20 space-y-12">
-            <SimilarStyles items={similarStyles} />
-            <Trims items={trimItems} />
+            {similarStyles.length > 0 && <SimilarStyles items={similarStyles} />}
+            {trimItems.length > 0 && <Trims items={trimItems} />}
         </div>
-
+        
         {/* Expanded Image Modal */}
         {isExpanded && (
             <div 
@@ -225,11 +289,11 @@ export default function ProductDetailPage() {
                 <button 
                     className="absolute top-6 right-6 text-white/80 hover:text-white transition-colors"
                 >
-                    <Maximize2 className="w-8 h-8 rotate-45" /> {/* Using rotate-45 to mimic 'X' if Close icon isn't imported, but I should probably import X */}
+                    <Maximize2 className="w-8 h-8 rotate-45" />
                 </button>
                 <div className="relative w-full h-full max-w-7xl max-h-[90vh]">
                      <Image
-                        src={images[selectedImage]}
+                        src={displayImages[selectedImage]}
                         alt="Expanded View"
                         fill
                         className="object-contain"

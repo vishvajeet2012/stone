@@ -6,14 +6,25 @@ export interface IProduct extends Document {
   category: mongoose.Types.ObjectId;
   images: mongoose.Types.ObjectId[];
   description: string;
+  technicalSpecifications?: {
+    seriesName?: string;
+    primaryColor?: string;
+    thickness?: string;
+    style?: string;
+    wearLayer?: string;
+    environmental?: string;
+    radiantHeating?: string;
+    additionalResources?: string;
+  };
   specs: { label: string; value: string }[];
   applications: {
     flooring: { residential: boolean; commercial: boolean };
     wall: { residential: boolean; commercial: boolean };
   };
-  finishes: { name: string; image?: mongoose.Types.ObjectId }[];
+  finishes: { name: string; description?: string; image?: mongoose.Types.ObjectId }[];
   trims: {
     name: string;
+    sku?: string;
     dimensions: string;
     image: mongoose.Types.ObjectId;
   }[];
@@ -46,6 +57,21 @@ const ProductSchema: Schema<IProduct> = new Schema(
     },
     images: [{ type: Schema.Types.ObjectId, ref: "Image" }],
     description: { type: String, required: true },
+    finishes: [{ 
+      name: String,
+      description: String,
+      image: { type: Schema.Types.ObjectId, ref: "Image" } 
+    }],
+    technicalSpecifications: {
+      seriesName: String,
+      primaryColor: String,
+      thickness: String,
+      style: String,
+      wearLayer: String,
+      environmental: String,
+      radiantHeating: String,
+      additionalResources: String,
+    },
     specs: [{ label: String, value: String }],
     applications: {
       flooring: {
@@ -57,12 +83,9 @@ const ProductSchema: Schema<IProduct> = new Schema(
         commercial: { type: Boolean, default: false },
       },
     },
-    finishes: [{ 
-      name: String, 
-      image: { type: Schema.Types.ObjectId, ref: "Image" } 
-    }],
     trims: [{ 
-      name: String, 
+      name: String,
+      sku: String,
       dimensions: String, 
       image: { type: Schema.Types.ObjectId, ref: "Image" } 
     }],

@@ -32,7 +32,7 @@ export default async function CategoryPage({
   const description = category?.description || "";
   
   // Get banner images
-  const bannerImages = category?.BannerImages?.map((img: any) => `/api/images/${img.slug}`) || [];
+  const bannerImages = category?.BannerImages?.map((img: any) => img.url ? img.url : `/api/images/${img.slug}`) || [];
 
   return (
     <main className="min-h-screen bg-warm-cream">

@@ -6,7 +6,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 // Helper to get image URL
+// Helper to get image URL
 const getImageUrl = (product: any): string => {
+  if (product.images?.[0]?.url) return product.images[0].url;
   if (product.images?.[0]?.slug) {
     return `/api/images/${product.images[0].slug}`;
   }
