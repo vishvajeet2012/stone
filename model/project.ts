@@ -12,13 +12,8 @@ export interface IProject extends Document {
   architect?: string;
   completionYear?: string;
   description: string;
-  // Main image for card display
-  image?: mongoose.Types.ObjectId;
-  // Gallery images for lightbox
+  image: mongoose.Types.ObjectId;
   gallery: mongoose.Types.ObjectId[];
-  // Legacy fields - kept for backward compatibility
-  images: mongoose.Types.ObjectId[];
-  BannerImages: mongoose.Types.ObjectId[];
   isFeatured: boolean;
   isActive: boolean;
   createdAt: Date;
@@ -54,13 +49,8 @@ const ProjectSchema: Schema<IProject> = new Schema(
     architect: { type: String, trim: true },
     completionYear: { type: String, trim: true },
     description: { type: String, required: true },
-    // Main display image
-    image: { type: Schema.Types.ObjectId, ref: "Image" },
-    // Gallery for lightbox
+    image: { type: Schema.Types.ObjectId, ref: "Image", required: true },
     gallery: [{ type: Schema.Types.ObjectId, ref: "Image" }],
-    // Legacy fields
-    images: [{ type: Schema.Types.ObjectId, ref: "Image" }],
-    BannerImages: [{ type: Schema.Types.ObjectId, ref: "Image" }],
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
   },
@@ -69,4 +59,3 @@ const ProjectSchema: Schema<IProject> = new Schema(
 
 const Project: Model<IProject> = mongoose.models.Project || mongoose.model<IProject>("Project", ProjectSchema);
 export default Project;
-

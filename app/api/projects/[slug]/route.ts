@@ -48,6 +48,17 @@ export async function PUT(
       return NextResponse.json({ success: false, error: "Project not found" }, { status: 404 });
     }
 
+    // Update image relations
+    if (body.image) {
+      await ImageModel.findByIdAndUpdate(body.image, { relatedProject: project._id });
+    }
+    if (body.gallery && body.gallery.length > 0) {
+      await ImageModel.updateMany(
+        { _id: { $in: body.gallery } },
+        { relatedProject: project._id }
+      );
+    }
+
     return NextResponse.json({ success: true, data: project });
   } catch (_error) {
     return NextResponse.json({ success: false, error: "Failed to update project" }, { status: 400 });
@@ -69,20 +80,9 @@ export async function DELETE(
       return NextResponse.json({ success: false, error: "Project not found" }, { status: 404 });
     }
 
-    const ImageModel = require("@/model/image").default;
-
-    // Cleanup main images
-    if (project.images && project.images.length > 0) {
-      for (const imageId of project.images) {
-        await ImageModel.findByIdAndDelete(imageId);
-      }
-    }
-    
-    // Cleanup banner images
-    if (project.BannerImages && project.BannerImages.length > 0) {
-      for (const imageId of project.BannerImages) {
-        await ImageModel.findByIdAndDelete(imageId);
-      }
+    // Cleanup main image
+    if (project.image) {
+      await ImageModel.findByIdAndDelete(project.image);
     }
 
     // Cleanup gallery images
@@ -99,3 +99,4 @@ export async function DELETE(
     return NextResponse.json({ success: false, error: "Failed to delete project" }, { status: 400 });
   }
 }
+

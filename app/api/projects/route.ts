@@ -3,15 +3,15 @@ import dbConnect from "@/lib/db";
 import Project from "@/model/project";
 import ImageModel from "@/model/image";
 import { slugify } from "@/lib/utils";
+import { verifyAdmin } from "@/lib/auth-server";
 
-export async function GET(_req: Request) {
+export async function GET() {
   try {
     await dbConnect();
     const projects = await Project.find()
       .populate('category')
       .populate('products')
-      .populate('images')
-      .populate('BannerImages')
+      .populate('image')
       .populate('gallery')
       .sort({ createdAt: -1 });
     
@@ -20,8 +20,6 @@ export async function GET(_req: Request) {
     return NextResponse.json({ success: false, error: "Failed to fetch projects" }, { status: 500 });
   }
 }
-
-import { verifyAdmin } from "@/lib/auth-server";
 
 export async function POST(req: Request) {
   try {
@@ -33,29 +31,19 @@ export async function POST(req: Request) {
       body.slug = slugify(body.title);
     }
 
-    const project: any = await Project.create(body);
+    const project = await Project.create(body) as import("@/model/project").IProject;
 
-    // Link images back to project
-
-    if (body.images && body.images.length > 0) {
-        await ImageModel.updateMany(
-            { _id: { $in: body.images } },
-            { relatedProject: project._id }
-        );
+    // Link image to project
+    if (body.image) {
+      await ImageModel.findByIdAndUpdate(body.image, { relatedProject: project._id });
     }
 
-    if (body.BannerImages && body.BannerImages.length > 0) {
-        await ImageModel.updateMany(
-            { _id: { $in: body.BannerImages } },
-            { relatedProject: project._id }
-        );
-    }
-
+    // Link gallery images to project
     if (body.gallery && body.gallery.length > 0) {
-        await ImageModel.updateMany(
-            { _id: { $in: body.gallery } },
-            { relatedProject: project._id }
-        );
+      await ImageModel.updateMany(
+        { _id: { $in: body.gallery } },
+        { relatedProject: project._id }
+      );
     }
 
     return NextResponse.json({ success: true, data: project }, { status: 201 });
