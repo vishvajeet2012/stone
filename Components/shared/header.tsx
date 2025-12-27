@@ -2,12 +2,14 @@
 import { Search, Camera, ShoppingCart, Heart, Globe, ChevronRight } from "lucide-react";
 import MobileNav from "@/Components/shared/MobileNav";
 import AnnouncementHomepage from "@/Components/shared/annoucmentHomepage";
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import axios from "axios";
 
-const megaMenuData = [
+// Static menu data for non-dynamic sections
+const staticMenuData = [
   {
     id: "company",
     label: "Company",
@@ -21,70 +23,6 @@ const megaMenuData = [
            { label: "Connect With Us", href: "#" }
          ]
        }
-    ]
-  },
-  {
-    id: "stone-collection",
-    label: "Stone Collection",
-    columns: [
-      {
-        title: "Sandstone",
-        items: [
-          { label: "Mint White", href: "/category/sandstone/mint-white" },
-          { label: "Kandla Grey", href: "/category/sandstone/kandla-grey" },
-          { label: "Raj Green", href: "/category/sandstone/raj-green" },
-          { label: "Teakwood", href: "/category/sandstone/teakwood" },
-          { label: "Rainbow", href: "/category/sandstone/rainbow" },
-          { label: "Modak", href: "/category/sandstone/modak" }
-        ]
-      },
-      {
-        title: "Limestone",
-        items: [
-          { label: "Kota Blue", href: "/category/limestone/kota-blue" },
-          { label: "Kota Brown", href: "/category/limestone/kota-brown" },
-          { label: "Tandur Yellow", href: "/category/limestone/tandur-yellow" },
-          { label: "Kadappa Black", href: "/category/limestone/kadappa-black" }
-        ]
-      },
-      {
-        title: "Granite",
-        items: [
-          { label: "Black Galaxy", href: "/category/granite/black-galaxy" },
-          { label: "Tan Brown", href: "/category/granite/tan-brown" },
-          { label: "Rajasthan Black", href: "/category/granite/rajasthan-black" },
-          { label: "Chima Pink", href: "/category/granite/chima-pink" },
-          { label: "Crystal Yellow", href: "/category/granite/crystal-yellow" }
-        ]
-      },
-      {
-        title: "Marble",
-        items: [
-          { label: "Forest Green", href: "/category/marble/forest-green" },
-          { label: "Rain Forest", href: "/category/marble/rain-forest" },
-          { label: "White Marble", href: "/category/marble/white-marble" },
-          { label: "Pink Marble", href: "/category/marble/pink-marble" },
-          { label: "Katni Marble", href: "/category/marble/katni-marble" }
-        ]
-      },
-      {
-        title: "Slate",
-        items: [
-          { label: "Jack Black", href: "/category/slate/jack-black" },
-          { label: "Copper", href: "/category/slate/copper" },
-          { label: "Multi-Color", href: "/category/slate/multi-color" },
-          { label: "Silver Shine", href: "/category/slate/silver-shine" }
-        ]
-      },
-      {
-        title: "Basalt & Quartz",
-        items: [
-           { label: "Black Basalt", href: "/category/basalt/black-basalt" },
-           { label: "Grey Basalt", href: "/category/basalt/grey-basalt" },
-           { label: "White Quartz", href: "/category/quartz/white-quartz" },
-           { label: "Black Quartz", href: "/category/quartz/black-quartz" }
-        ]
-      }
     ]
   },
   {
@@ -139,10 +77,73 @@ const megaMenuData = [
   }
 ];
 
+interface MenuItem {
+  label: string;
+  href: string;
+}
+
+interface MenuColumn {
+  title: string;
+  items: MenuItem[];
+}
+
+interface MenuCategory {
+  id: string;
+  label: string;
+  columns: MenuColumn[];
+}
+
 export default function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [activeSubCategory, setActiveSubCategory] = useState<string | null>(null);
+  const [stoneCollectionData, setStoneCollectionData] = useState<MenuCategory | null>(null);
+
+  // Fetch stone collection categories from API
+  useEffect(() => {
+    const fetchStoneCollection = async () => {
+      try {
+        const { data } = await axios.get('/api/menu');
+        if (data.success && data.data?.length > 0) {
+          // Transform API data to menu format
+          // Group products by category
+          const columns: MenuColumn[] = data.data.map((category: any) => ({
+            title: category.title,
+            items: category.products.map((product: any) => ({
+              label: product.label,
+              href: product.href,
+            })),
+          }));
+
+          setStoneCollectionData({
+            id: "stone-collection",
+            label: "Stone Collection",
+            columns,
+          });
+        }
+      } catch (error) {
+        console.error("Failed to fetch stone collection:", error);
+        // Fallback to empty if API fails
+        setStoneCollectionData({
+          id: "stone-collection",
+          label: "Stone Collection",
+          columns: [],
+        });
+      }
+    };
+
+    fetchStoneCollection();
+  }, []);
+
+  // Combine static menu with dynamic stone collection
+  const megaMenuData = useMemo((): MenuCategory[] => {
+    const data: MenuCategory[] = [...staticMenuData];
+    if (stoneCollectionData) {
+      // Insert stone collection at the beginning
+      data.unshift(stoneCollectionData);
+    }
+    return data;
+  }, [stoneCollectionData]);
 
   const currentCategoryData = megaMenuData.find(c => c.id === activeCategory);
 
@@ -294,22 +295,26 @@ export default function Header() {
                                  if (col.title !== activeSubCategory) return null;
                                  return (
                                      <div key={idx} className="animate-in fade-in slide-in-from-left-2 duration-300">
-                                         <ul className="grid grid-cols-3 gap-x-8 gap-y-4">
-                                             {col.items.map((item, itemIdx) => (
-                                                 <li key={itemIdx}>
-                                                     <Link 
-                                                        href={item.href} 
-                                                        className="group flex items-center gap-3 p-2 rounded-lg hover:bg-saddle-brown/5 transition-colors"
-                                                        onClick={() => { setIsMegaMenuOpen(false); setActiveCategory(null); }}
-                                                     >
-                                                         <div className="w-1.5 h-1.5 rounded-full bg-saddle-brown/20 group-hover:bg-saddle-brown transition-colors" />
-                                                         <span className="text-sm font-medium text-modern-earthy/80 group-hover:text-saddle-brown transition-colors">
-                                                             {item.label}
-                                                         </span>
-                                                     </Link>
-                                                 </li>
-                                             ))}
-                                         </ul>
+                                         {col.items.length > 0 ? (
+                                           <ul className="grid grid-cols-3 gap-x-8 gap-y-4">
+                                               {col.items.map((item, itemIdx) => (
+                                                   <li key={itemIdx}>
+                                                       <Link 
+                                                          href={item.href} 
+                                                          className="group flex items-center gap-3 p-2 rounded-lg hover:bg-saddle-brown/5 transition-colors"
+                                                          onClick={() => { setIsMegaMenuOpen(false); setActiveCategory(null); }}
+                                                       >
+                                                           <div className="w-1.5 h-1.5 rounded-full bg-saddle-brown/20 group-hover:bg-saddle-brown transition-colors" />
+                                                           <span className="text-sm font-medium text-modern-earthy/80 group-hover:text-saddle-brown transition-colors">
+                                                               {item.label}
+                                                           </span>
+                                                       </Link>
+                                                   </li>
+                                               ))}
+                                           </ul>
+                                         ) : (
+                                           <p className="text-modern-earthy/60 text-sm">No products available in this category.</p>
+                                         )}
                                      </div>
                                  );
                              })}
