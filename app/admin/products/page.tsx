@@ -43,12 +43,22 @@ export default function AdminProducts() {
     isFeatured: false,
     menuOrder: 0,
     specs: [] as { label: string; value: string }[],
+    technicalSpecifications: {
+      seriesName: "",
+      primaryColor: "",
+      thickness: "",
+      style: "",
+      wearLayer: "",
+      environmental: "",
+      radiantHeating: "",
+      additionalResources: "",
+    },
     applications: {
       flooring: { residential: true, commercial: false },
       wall: { residential: true, commercial: false },
     },
-    finishes: [] as { name: string }[],
-    trims: [] as { name: string; dimensions: string }[],
+    finishes: [] as { name: string; description: string }[],
+    trims: [] as { name: string; dimensions: string; sku: string }[],
   });
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
 
@@ -81,12 +91,22 @@ export default function AdminProducts() {
             isFeatured: product.isFeatured || false,
             menuOrder: product.menuOrder || 0,
             specs: product.specs || [],
+            technicalSpecifications: {
+              seriesName: product.technicalSpecifications?.seriesName || "",
+              primaryColor: product.technicalSpecifications?.primaryColor || "",
+              thickness: product.technicalSpecifications?.thickness || "",
+              style: product.technicalSpecifications?.style || "",
+              wearLayer: product.technicalSpecifications?.wearLayer || "",
+              environmental: product.technicalSpecifications?.environmental || "",
+              radiantHeating: product.technicalSpecifications?.radiantHeating || "",
+              additionalResources: product.technicalSpecifications?.additionalResources || "",
+            },
             applications: product.applications || {
               flooring: { residential: true, commercial: false },
               wall: { residential: true, commercial: false },
             },
-            finishes: product.finishes?.map(f => ({ name: f.name })) || [],
-            trims: product.trims?.map(t => ({ name: t.name, dimensions: t.dimensions })) || [],
+            finishes: product.finishes?.map((f: any) => ({ name: f.name, description: f.description || "" })) || [],
+            trims: product.trims?.map((t: any) => ({ name: t.name, dimensions: t.dimensions, sku: t.sku || "" })) || [],
         });
     } else {
         setEditingId(null);
@@ -98,6 +118,16 @@ export default function AdminProducts() {
             isFeatured: false,
             menuOrder: 0,
             specs: [],
+            technicalSpecifications: {
+              seriesName: "",
+              primaryColor: "",
+              thickness: "",
+              style: "",
+              wearLayer: "",
+              environmental: "",
+              radiantHeating: "",
+              additionalResources: "",
+            },
             applications: {
               flooring: { residential: true, commercial: false },
               wall: { residential: true, commercial: false },
@@ -298,10 +328,49 @@ export default function AdminProducts() {
               />
             </div>
 
-            {/* Specifications */}
-            <div className="space-y-2">
+            {/* Technical Specifications */}
+            <div className="space-y-3 pt-4 border-t border-stone-200">
+                <Label className="text-lg font-semibold">Technical Specifications</Label>
+                <div className="grid grid-cols-2 gap-4">
+                     <div className="grid gap-2">
+                        <Label>Series Name(s)</Label>
+                        <Input value={formData.technicalSpecifications.seriesName} onChange={(e) => setFormData({...formData, technicalSpecifications: {...formData.technicalSpecifications, seriesName: e.target.value}})} />
+                     </div>
+                     <div className="grid gap-2">
+                        <Label>Primary Color(s)</Label>
+                        <Input value={formData.technicalSpecifications.primaryColor} onChange={(e) => setFormData({...formData, technicalSpecifications: {...formData.technicalSpecifications, primaryColor: e.target.value}})} />
+                     </div>
+                     <div className="grid gap-2">
+                        <Label>Thickness</Label>
+                        <Input value={formData.technicalSpecifications.thickness} onChange={(e) => setFormData({...formData, technicalSpecifications: {...formData.technicalSpecifications, thickness: e.target.value}})} />
+                     </div>
+                     <div className="grid gap-2">
+                        <Label>Style</Label>
+                        <Input value={formData.technicalSpecifications.style} onChange={(e) => setFormData({...formData, technicalSpecifications: {...formData.technicalSpecifications, style: e.target.value}})} />
+                     </div>
+                     <div className="grid gap-2">
+                        <Label>Wear Layer</Label>
+                        <Input value={formData.technicalSpecifications.wearLayer} onChange={(e) => setFormData({...formData, technicalSpecifications: {...formData.technicalSpecifications, wearLayer: e.target.value}})} />
+                     </div>
+                     <div className="grid gap-2">
+                        <Label>Environmental</Label>
+                        <Input value={formData.technicalSpecifications.environmental} onChange={(e) => setFormData({...formData, technicalSpecifications: {...formData.technicalSpecifications, environmental: e.target.value}})} />
+                     </div>
+                     <div className="grid gap-2">
+                        <Label>Radiant Heating</Label>
+                        <Input value={formData.technicalSpecifications.radiantHeating} onChange={(e) => setFormData({...formData, technicalSpecifications: {...formData.technicalSpecifications, radiantHeating: e.target.value}})} />
+                     </div>
+                     <div className="grid gap-2">
+                        <Label>Additional Resources</Label>
+                        <Input value={formData.technicalSpecifications.additionalResources} onChange={(e) => setFormData({...formData, technicalSpecifications: {...formData.technicalSpecifications, additionalResources: e.target.value}})} />
+                     </div>
+                </div>
+            </div>
+
+            {/* Additional Specs (Generic) */}
+            <div className="space-y-2 pt-4 border-t border-stone-200">
                 <div className="flex justify-between items-center">
-                    <Label>Specifications</Label>
+                    <Label>Additional Specifications (Generic)</Label>
                     <Button type="button" variant="outline" size="sm" onClick={() => setFormData({
                         ...formData, 
                         specs: [...formData.specs, { label: "", value: "" }]
@@ -312,7 +381,7 @@ export default function AdminProducts() {
                 {formData.specs.map((spec, index) => (
                     <div key={index} className="flex gap-2">
                         <Input 
-                            placeholder="Label (e.g. Thickness)" 
+                            placeholder="Label" 
                             value={spec.label}
                             onChange={(e) => {
                                 const newSpecs = [...formData.specs];
@@ -321,7 +390,7 @@ export default function AdminProducts() {
                             }}
                         />
                         <Input 
-                            placeholder="Value (e.g. 20mm)" 
+                            placeholder="Value" 
                             value={spec.value}
                             onChange={(e) => {
                                 const newSpecs = [...formData.specs];
@@ -416,13 +485,22 @@ export default function AdminProducts() {
                     <Label className="text-lg font-semibold">Finishes</Label>
                     <Button type="button" variant="outline" size="sm" onClick={() => setFormData({
                         ...formData, 
-                        finishes: [...formData.finishes, { name: "" }]
+                        finishes: [...formData.finishes, { name: "", description: "" }]
                     })}>
                         Add Finish
                     </Button>
                 </div>
                 {formData.finishes.map((finish, index) => (
-                    <div key={index} className="flex gap-2">
+                    <div key={index} className="grid gap-2 border p-3 rounded-lg bg-stone-50">
+                        <div className="flex justify-between">
+                            <Label className="text-xs uppercase font-bold text-stone-500">Finish {index + 1}</Label>
+                            <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => {
+                                 const newFinishes = formData.finishes.filter((_, i) => i !== index);
+                                 setFormData({...formData, finishes: newFinishes});
+                            }}>
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                        </div>
                         <Input 
                             placeholder="Finish Name (e.g. Polished)" 
                             value={finish.name}
@@ -432,12 +510,15 @@ export default function AdminProducts() {
                                 setFormData({...formData, finishes: newFinishes});
                             }}
                         />
-                        <Button type="button" variant="ghost" size="icon" onClick={() => {
-                             const newFinishes = formData.finishes.filter((_, i) => i !== index);
-                             setFormData({...formData, finishes: newFinishes});
-                        }}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
+                        <Input 
+                            placeholder="Description (Optional)" 
+                            value={finish.description}
+                            onChange={(e) => {
+                                const newFinishes = [...formData.finishes];
+                                newFinishes[index].description = e.target.value;
+                                setFormData({...formData, finishes: newFinishes});
+                            }}
+                        />
                     </div>
                 ))}
             </div>
@@ -448,37 +529,51 @@ export default function AdminProducts() {
                     <Label className="text-lg font-semibold">Trims</Label>
                     <Button type="button" variant="outline" size="sm" onClick={() => setFormData({
                         ...formData, 
-                        trims: [...formData.trims, { name: "", dimensions: "" }]
+                        trims: [...formData.trims, { name: "", dimensions: "", sku: "" }]
                     })}>
                         Add Trim
                     </Button>
                 </div>
                 {formData.trims.map((trim, index) => (
-                    <div key={index} className="flex gap-2">
-                        <Input 
-                            placeholder="Trim Name" 
-                            value={trim.name}
-                            onChange={(e) => {
-                                const newTrims = [...formData.trims];
-                                newTrims[index].name = e.target.value;
-                                setFormData({...formData, trims: newTrims});
-                            }}
-                        />
-                        <Input 
-                            placeholder="Dimensions" 
-                            value={trim.dimensions}
-                            onChange={(e) => {
-                                const newTrims = [...formData.trims];
-                                newTrims[index].dimensions = e.target.value;
-                                setFormData({...formData, trims: newTrims});
-                            }}
-                        />
-                        <Button type="button" variant="ghost" size="icon" onClick={() => {
-                             const newTrims = formData.trims.filter((_, i) => i !== index);
-                             setFormData({...formData, trims: newTrims});
-                        }}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                        </Button>
+                    <div key={index} className="grid gap-2 border p-3 rounded-lg bg-stone-50">
+                        <div className="flex justify-between">
+                             <Label className="text-xs uppercase font-bold text-stone-500">Trim {index + 1}</Label>
+                             <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => {
+                                  const newTrims = formData.trims.filter((_, i) => i !== index);
+                                  setFormData({...formData, trims: newTrims});
+                             }}>
+                                 <Trash2 className="h-4 w-4 text-red-500" />
+                             </Button>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2">
+                            <Input 
+                                placeholder="Trim Name" 
+                                value={trim.name}
+                                onChange={(e) => {
+                                    const newTrims = [...formData.trims];
+                                    newTrims[index].name = e.target.value;
+                                    setFormData({...formData, trims: newTrims});
+                                }}
+                            />
+                            <Input 
+                                placeholder="Dimensions" 
+                                value={trim.dimensions}
+                                onChange={(e) => {
+                                    const newTrims = [...formData.trims];
+                                    newTrims[index].dimensions = e.target.value;
+                                    setFormData({...formData, trims: newTrims});
+                                }}
+                            />
+                            <Input 
+                                placeholder="SKU" 
+                                value={trim.sku}
+                                onChange={(e) => {
+                                    const newTrims = [...formData.trims];
+                                    newTrims[index].sku = e.target.value;
+                                    setFormData({...formData, trims: newTrims});
+                                }}
+                            />
+                        </div>
                     </div>
                 ))}
             </div>
