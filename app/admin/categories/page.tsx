@@ -38,10 +38,11 @@ export default function AdminCategories() {
     name: "",
     slug: "",
     description: "",
+    bannerText: "",
     type: "stone",
-    level: 0,
     order: 0,
     showInMenu: true,
+    isActive: true,
   });
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -74,10 +75,11 @@ export default function AdminCategories() {
         name: category.name,
         slug: category.slug,
         description: category.description || "",
+        bannerText: category.bannerText || "",
         type: category.type || "stone",
-        level: category.level || 0,
         order: category.order || 0,
         showInMenu: category.showInMenu ?? true,
+        isActive: category.isActive ?? true,
       });
       // Set initial previews from existing data
       const img: any = category.images?.[0];
@@ -95,10 +97,11 @@ export default function AdminCategories() {
         name: "",
         slug: "",
         description: "",
+        bannerText: "",
         type: "stone",
-        level: 0,
         order: 0,
         showInMenu: true,
+        isActive: true,
       });
       setPreviewImage(null);
       setPreviewBanner(null);
@@ -157,10 +160,11 @@ export default function AdminCategories() {
       const payload: any = {
         name: formData.name,
         description: formData.description,
+        bannerText: formData.bannerText,
         type: formData.type,
-        level: formData.level,
         order: formData.order,
         showInMenu: formData.showInMenu,
+        isActive: formData.isActive,
       };
       if (formData.slug) payload.slug = formData.slug;
       if (imageIds.length > 0) payload.images = imageIds;
@@ -340,15 +344,27 @@ export default function AdminCategories() {
                     />
                  </div>
             </div>
-             <div className="flex items-center space-x-2 mt-2">
-                <input
-                    type="checkbox"
-                    id="showInMenu"
-                    className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
-                    checked={formData.showInMenu}
-                    onChange={(e) => setFormData({...formData, showInMenu: e.target.checked})}
-                />
-                <Label htmlFor="showInMenu">Show In Menu</Label>
+             <div className="flex items-center space-x-4 mt-2">
+                <div className="flex items-center space-x-2">
+                  <input
+                      type="checkbox"
+                      id="showInMenu"
+                      className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
+                      checked={formData.showInMenu}
+                      onChange={(e) => setFormData({...formData, showInMenu: e.target.checked})}
+                  />
+                  <Label htmlFor="showInMenu">Show In Menu</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                      type="checkbox"
+                      id="isActive"
+                      className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
+                      checked={formData.isActive}
+                      onChange={(e) => setFormData({...formData, isActive: e.target.checked})}
+                  />
+                  <Label htmlFor="isActive">Active</Label>
+                </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
@@ -357,6 +373,16 @@ export default function AdminCategories() {
                 value={formData.description} 
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                 className="h-24"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="bannerText">Banner Text</Label>
+              <Textarea 
+                id="bannerText" 
+                value={formData.bannerText} 
+                onChange={(e) => setFormData({...formData, bannerText: e.target.value})}
+                placeholder="Text to display on the category banner"
+                className="h-20"
               />
             </div>
             

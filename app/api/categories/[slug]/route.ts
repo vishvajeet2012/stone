@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import Category from "@/model/category";
+import Product from "@/model/product";
 import { verifyAdmin } from "@/lib/auth-server";
 import ImageModel from "@/model/image";
 import { menuCache, CACHE_KEYS } from "@/lib/cache";
@@ -13,18 +14,34 @@ export async function GET(
   try {
     await dbConnect();
     const { slug } = params;
+    
+    // Fetch category with images populated
     const category = await Category.findOne({ slug })
-      .populate('parentCategory')
       .populate('thumbnailImage')
       .populate('images')
-      .populate('BannerImages');
+      .populate('BannerImages')
+      .lean();
 
     if (!category) {
       return NextResponse.json({ success: false, error: "Category not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, data: category });
-  } catch (_error) {
+    // Fetch products for this category with images populated
+    const products = await Product.find({ category: category._id })
+      .populate('images')
+      .populate('finishes.image')
+      .populate('trims.image')
+      .lean();
+
+    return NextResponse.json({ 
+      success: true, 
+      data: { 
+        ...category,
+        products 
+      } 
+    });
+  } catch (error) {
+    console.error("Category GET error:", error);
     return NextResponse.json({ success: false, error: "Failed to fetch category" }, { status: 500 });
   }
 }

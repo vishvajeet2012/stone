@@ -3,14 +3,13 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface ICategory extends Document {
   name: string;
   slug: string;
-  parentCategory?: mongoose.Types.ObjectId; 
   type: "stone" | "service" | "collection" | "project";
   description?: string;
+  bannerText?: string; // Text to display on the banner
+  isActive: boolean; // Category active status
   thumbnailImage?: mongoose.Types.ObjectId; // For TopCategory cards (300x300px)
   images: mongoose.Types.ObjectId[];
-  BannerImages: mongoose.Types.ObjectId[]; 
-  subCategories?: { label: string; href: string }[];
-  level?: number; 
+  BannerImages: mongoose.Types.ObjectId[];
   order?: number;
   showInMenu: boolean;
   createdAt: Date;
@@ -33,11 +32,6 @@ const CategorySchema: Schema<ICategory> = new Schema(
       required: [true, "Slug is required"],
       index: true,
     },
-    parentCategory: {
-      type: Schema.Types.ObjectId,
-      ref: "Category",
-      default: null,
-    },
     type: {
       type: String,
       enum: ["stone", "service", "collection", "project"],
@@ -46,6 +40,14 @@ const CategorySchema: Schema<ICategory> = new Schema(
     description: {
       type: String,
       trim: true,
+    },
+    bannerText: {
+      type: String,
+      trim: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
     thumbnailImage: {
       type: Schema.Types.ObjectId,
@@ -59,14 +61,6 @@ const CategorySchema: Schema<ICategory> = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Image",
     }],
-    
-    subCategories: [
-      {
-        label: { type: String, required: true },
-        href: { type: String, required: true },
-      },
-    ],
-    level: { type: Number, default: 0 },
     order: { type: Number, default: 0 },
     showInMenu: { type: Boolean, default: true },
   },
