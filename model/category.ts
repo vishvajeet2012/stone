@@ -6,6 +6,7 @@ export interface ICategory extends Document {
   parentCategory?: mongoose.Types.ObjectId; 
   type: "stone" | "service" | "collection" | "project";
   description?: string;
+  thumbnailImage?: mongoose.Types.ObjectId; // For TopCategory cards (300x300px)
   images: mongoose.Types.ObjectId[];
   BannerImages: mongoose.Types.ObjectId[]; 
   subCategories?: { label: string; href: string }[];
@@ -41,6 +42,14 @@ const CategorySchema: Schema<ICategory> = new Schema(
       type: String,
       enum: ["stone", "service", "collection", "project"],
       default: "stone",
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+    thumbnailImage: {
+      type: Schema.Types.ObjectId,
+      ref: "Image",
     },
     images: [{
       type: Schema.Types.ObjectId,

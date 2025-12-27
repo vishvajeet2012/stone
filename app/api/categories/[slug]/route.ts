@@ -15,6 +15,7 @@ export async function GET(
     const { slug } = params;
     const category = await Category.findOne({ slug })
       .populate('parentCategory')
+      .populate('thumbnailImage')
       .populate('images')
       .populate('BannerImages');
 
@@ -46,6 +47,14 @@ export async function PUT(
 
     if (!category) {
       return NextResponse.json({ success: false, error: "Category not found" }, { status: 404 });
+    }
+
+    // Link thumbnail image back to category
+    if (body.thumbnailImage) {
+      await ImageModel.findByIdAndUpdate(body.thumbnailImage, { 
+        relatedCategory: category._id,
+        isThumbnail: true 
+      });
     }
 
     // Invalidate menu cache

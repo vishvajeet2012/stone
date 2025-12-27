@@ -46,8 +46,10 @@ export default function AdminCategories() {
 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [selectedBanner, setSelectedBanner] = useState<File | null>(null);
+  const [selectedThumbnail, setSelectedThumbnail] = useState<File | null>(null);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [previewBanner, setPreviewBanner] = useState<string | null>(null);
+  const [previewThumbnail, setPreviewThumbnail] = useState<string | null>(null);
 
   const fetchCategories = async () => {
     try {
@@ -84,6 +86,9 @@ export default function AdminCategories() {
       const banner: any = category.BannerImages?.[0];
       setPreviewBanner(banner?.slug ? `/api/images/${banner.slug}` : null);
 
+      const thumbnail: any = category.thumbnailImage;
+      setPreviewThumbnail(thumbnail?.slug ? `/api/images/${thumbnail.slug}` : null);
+
     } else {
       setEditingId(null);
       setFormData({
@@ -97,9 +102,11 @@ export default function AdminCategories() {
       });
       setPreviewImage(null);
       setPreviewBanner(null);
+      setPreviewThumbnail(null);
     }
     setSelectedImage(null);
     setSelectedBanner(null);
+    setSelectedThumbnail(null);
     setIsDialogOpen(true);
   };
 
@@ -135,6 +142,18 @@ export default function AdminCategories() {
            if (bannerJson._id) bannerIds.push(bannerJson._id);
       }
 
+      // Upload Thumbnail Image (300x300px card for TopCategory)
+      let thumbnailId: string | undefined;
+      if (selectedThumbnail) {
+           const thumbData = new FormData();
+           thumbData.append("file", selectedThumbnail);
+           thumbData.append("isThumbnail", "true");
+           const thumbRes = await fetch("/api/images", { method: "POST", body: thumbData });
+           if (!thumbRes.ok) throw new Error("Failed to upload thumbnail");
+           const thumbJson = await thumbRes.json();
+           thumbnailId = thumbJson._id;
+      }
+
       const payload: any = {
         name: formData.name,
         description: formData.description,
@@ -146,6 +165,7 @@ export default function AdminCategories() {
       if (formData.slug) payload.slug = formData.slug;
       if (imageIds.length > 0) payload.images = imageIds;
       if (bannerIds.length > 0) payload.BannerImages = bannerIds;
+      if (thumbnailId) payload.thumbnailImage = thumbnailId;
 
       if (editingId) {
         await api.categories.update(editingId, payload);
@@ -384,6 +404,30 @@ export default function AdminCategories() {
                         />
                     </div>
                  </div>
+            </div>
+
+            {/* Thumbnail Image for TopCategory Cards */}
+            <div className="space-y-2 border-t pt-4 mt-4">
+                <Label>Thumbnail Image (for Category Cards)</Label>
+                <p className="text-xs text-gray-500">Recommended size: 300x300px (square). Used in TopCategory section.</p>
+                <div className="flex flex-col gap-2">
+                    {previewThumbnail && (
+                        <div className="relative w-32 h-32 bg-stone-100 rounded-lg overflow-hidden border border-stone-200">
+                            <img src={previewThumbnail} alt="Thumbnail Preview" className="w-full h-full object-cover" />
+                        </div>
+                    )}
+                    <Input 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                                setSelectedThumbnail(file);
+                                setPreviewThumbnail(URL.createObjectURL(file));
+                            }
+                        }} 
+                    />
+                </div>
             </div>
 
             <div className="flex justify-end gap-3 mt-6">

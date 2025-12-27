@@ -9,10 +9,12 @@ export async function GET(_req: Request) {
   try {
     await dbConnect();
     const categories = await Category.find().sort({ order: 1 })
+      .populate('thumbnailImage')
       .populate('images')
       .populate('BannerImages');
     return NextResponse.json({ success: true, data: categories });
-  } catch (_error) {
+  } catch (error) {
+    console.error("Categories GET error:", error);
     return NextResponse.json({ success: false, error: "Failed to fetch categories" }, { status: 500 });
   }
 }
@@ -31,8 +33,15 @@ export async function POST(req: Request) {
 
     const category: any = await Category.create(body);
 
-    // Link images back to category
+    // Link thumbnail image back to category
+    if (body.thumbnailImage) {
+      await ImageModel.findByIdAndUpdate(body.thumbnailImage, { 
+        relatedCategory: category._id,
+        isThumbnail: true 
+      });
+    }
 
+    // Link images back to category
     if (body.images && body.images.length > 0) {
       await ImageModel.updateMany(
         { _id: { $in: body.images } },
