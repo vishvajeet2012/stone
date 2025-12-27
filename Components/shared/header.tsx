@@ -17,7 +17,7 @@ const staticMenuData = [
        {
          title: "About Us",
          items: [
-           { label: "Our Story", href: "#" }, 
+           { label: "Our Story", href: "/company/about-us" }, 
            { label: "Quality & Certifications", href: "#" }, 
            { label: "Sustainability & Ethics", href: "#" }, 
            { label: "Connect With Us", href: "#" }
@@ -105,8 +105,7 @@ export default function Header() {
       try {
         const { data } = await axios.get('/api/menu');
         if (data.success && data.data?.length > 0) {
-          // Transform API data to menu format
-          // Group products by category
+        
           const columns: MenuColumn[] = data.data.map((category: any) => ({
             title: category.title,
             items: category.products.map((product: any) => ({
