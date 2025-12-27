@@ -221,11 +221,12 @@ export default function Header() {
               { label: "Artisan Excellence & Services", id: "artisan-excellence" },
               { label: "Projects", id: "projects" },
               { label: "Company", id: "company" },
+              { label: "Blog", id: "blog" },
               { label: "Contact Us", id: "contact" }
             ].map((link) => (
               <Link 
                 key={link.id} 
-                href={link.id === "projects" ? "/projects/residential" : "#"} // Default link logic can be improved
+                href={link.id === "projects" ? "/projects/residential" : link.id === "blog" ? "/blog" : "#"} // Default link logic can be improved
                 className={cn(
                   "hover:text-saddle-brown uppercase transition-colors py-2 relative",
                   activeCategory === link.id && isMegaMenuOpen && "text-saddle-brown after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-saddle-brown"
