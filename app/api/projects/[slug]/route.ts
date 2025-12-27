@@ -13,7 +13,6 @@ export async function GET(
     await dbConnect();
     const { slug } = params;
     const project = await Project.findOne({ slug })
-      .populate('category')
       .populate('products')
       .populate('image')
       .populate('gallery');

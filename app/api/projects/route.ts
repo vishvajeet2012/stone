@@ -9,7 +9,6 @@ export async function GET() {
   try {
     await dbConnect();
     const projects = await Project.find()
-      .populate('category')
       .populate('products')
       .populate('image')
       .populate('gallery')

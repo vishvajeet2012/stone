@@ -1,9 +1,12 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
+// Project category enum - matches header navigation
+export type ProjectCategory = "residential" | "commercial" | "international";
+
 export interface IProject extends Document {
   title: string;
   slug: string;
-  category: mongoose.Types.ObjectId;
+  category: ProjectCategory;
   location?: string;
   stoneUsed?: string;
   products: mongoose.Types.ObjectId[];
@@ -36,9 +39,9 @@ const ProjectSchema: Schema<IProject> = new Schema(
       index: true,
     },
     category: {
-      type: Schema.Types.ObjectId,
-      ref: "Category",
-      required: [true, "Project Category is required"],
+      type: String,
+      enum: ["residential", "commercial", "international"],
+      required: [true, "Project category is required"],
       index: true,
     },
     location: { type: String, trim: true },
@@ -59,3 +62,4 @@ const ProjectSchema: Schema<IProject> = new Schema(
 
 const Project: Model<IProject> = mongoose.models.Project || mongoose.model<IProject>("Project", ProjectSchema);
 export default Project;
+

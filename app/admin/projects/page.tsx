@@ -33,11 +33,13 @@ import {
 } from "@/Components/ui/table";
 import { slugify } from "@/lib/utils";
 
-interface ICategory {
-  _id: string;
-  name: string;
-  slug: string;
-}
+
+// Project category options matching model enum
+const PROJECT_CATEGORIES = [
+  { value: "residential", label: "Residential Projects" },
+  { value: "commercial", label: "Commercial Projects" },
+  { value: "international", label: "International Installations" },
+] as const;
 
 interface IImage {
   _id: string;
@@ -52,7 +54,7 @@ interface IProject {
   _id: string;
   title: string;
   slug: string;
-  category: ICategory;
+  category: string;
   location?: string;
   stoneUsed?: string;
   description: string;
@@ -65,7 +67,6 @@ interface IProject {
 
 export default function AdminProjects() {
   const [projects, setProjects] = useState<IProject[]>([]);
-  const [categories, setCategories] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -95,12 +96,8 @@ export default function AdminProjects() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [projectsRes, categoriesRes] = await Promise.all([
-        axios.get("/api/projects"),
-        axios.get("/api/categories"),
-      ]);
+      const projectsRes = await axios.get("/api/projects");
       if (projectsRes.data.success) setProjects(projectsRes.data.data);
-      if (categoriesRes.data.success) setCategories(categoriesRes.data.data);
     } catch (_error) {
       toast.error("Failed to fetch data");
     } finally {
@@ -119,7 +116,7 @@ export default function AdminProjects() {
         title: project.title,
         slug: project.slug,
         description: project.description,
-        category: project.category?._id || "",
+        category: project.category || "residential",
         location: project.location || "",
         stoneUsed: project.stoneUsed || "",
         finish: "",
@@ -137,7 +134,7 @@ export default function AdminProjects() {
         title: "",
         slug: "",
         description: "",
-        category: categories.length > 0 ? categories[0]._id : "",
+        category: "residential",
         location: "",
         stoneUsed: "",
         finish: "",
@@ -296,7 +293,11 @@ export default function AdminProjects() {
                       {project.isFeatured && <Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />}
                     </div>
                   </TableCell>
-                  <TableCell>{project.category?.name || "-"}</TableCell>
+                  <TableCell>
+                    <span className="capitalize">
+                      {PROJECT_CATEGORIES.find(c => c.value === project.category)?.label || project.category}
+                    </span>
+                  </TableCell>
                   <TableCell>
                     {project.location && (
                       <span className="flex items-center gap-1 text-sm text-stone-600">
@@ -370,8 +371,8 @@ export default function AdminProjects() {
                   required
                 >
                   <option value="">Select Category</option>
-                  {categories.map((cat) => (
-                    <option key={cat._id} value={cat._id}>{cat.name}</option>
+                  {PROJECT_CATEGORIES.map((cat) => (
+                    <option key={cat.value} value={cat.value}>{cat.label}</option>
                   ))}
                 </select>
               </div>
