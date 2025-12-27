@@ -16,8 +16,7 @@ export async function GET(
     const product = await Product.findOne({ slug })
       .populate('category')
       .populate('images')
-      .populate('finishes.image')
-      .populate('trims.image');
+      .populate('finishes.image');
     
     if (!product) {
       return NextResponse.json({ success: false, error: "Product not found" }, { status: 404 });
@@ -68,15 +67,6 @@ export async function PUT(
       }
     }
 
-    // Trims images
-    if (product.trims) {
-      for (const trim of product.trims) {
-        if (trim.image) {
-           await ImageModel.findByIdAndUpdate(trim.image, { relatedProduct: product._id });
-        }
-      }
-    }
-
     // Invalidate menu cache
     menuCache.invalidate(CACHE_KEYS.MENU);
 
@@ -115,15 +105,6 @@ export async function DELETE(
             await ImageModel.findByIdAndDelete(finish.image);
         }
       }
-    }
-
-    // Cleanup trim images
-    if (product.trims) {
-        for (const trim of product.trims) {
-          if (trim.image) {
-              await ImageModel.findByIdAndDelete(trim.image);
-          }
-        }
     }
 
     await Product.findOneAndDelete({ slug });

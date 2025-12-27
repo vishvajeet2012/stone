@@ -11,17 +11,17 @@ import {
   Loader2
 } from "lucide-react";
 import { SimilarStyles } from "@/Components/SimilarStyles";
-import { Trims } from "@/Components/Trims";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import { IProduct } from "@/model/product";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const productSlug = params?.productSlug as string;
   
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<IProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("SPECS");
@@ -60,26 +60,20 @@ export default function ProductDetailPage() {
     );
   }
 
-  // Parse images
-  const mainImages = product.images?.map((img: any) => img.url ? img.url : `/api/images/${img.slug}`) || [];
+  // Parse images with labels
+  const imageData = product.images?.map((img: { url?: string; slug?: string; label?: string }) => ({
+    url: img.url ? img.url : `/api/images/${img.slug}`,
+    label: img.label || '' // Dynamic label from database
+  })) || [];
   // Fallback if no images
-  const displayImages = mainImages.length > 0 ? mainImages : ["/placeholder.jpg"];
+  const displayImages = imageData.length > 0 ? imageData : [{ url: "/placeholder.jpg", label: '' }];
 
   // Parse similar styles
-  const similarStyles = product.similarStyles?.map((item: any) => ({
+  const similarStyles = product.similarStyles?.map((item: { _id: string; name: string; images?: { url?: string; slug?: string }[] }) => ({
     id: item._id,
     name: item.name,
     image: item.images?.[0]?.url || (item.images?.[0]?.slug ? `/api/images/${item.images[0].slug}` : "/placeholder.jpg"),
     // collection removed
-  })) || [];
-
-  // Parse trims
-  const trimItems = product.trims?.map((item: any, idx: number) => ({
-    id: item._id || idx,
-    name: item.name,
-    dimensions: item.dimensions,
-    // SKU removed
-    image: item.image?.url || (item.image?.slug ? `/api/images/${item.image.slug}` : "/placeholder.jpg")
   })) || [];
 
   // Parse finishes
@@ -99,7 +93,7 @@ export default function ProductDetailPage() {
           <div className="lg:col-span-7 flex flex-col md:flex-row gap-4">
             
             <div className="hidden md:flex flex-col gap-4 w-24 shrink-0">
-               {displayImages.map((img: string, idx: number) => (
+               {displayImages.map((img: { url: string; label: string }, idx: number) => (
                  <button 
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
@@ -110,20 +104,23 @@ export default function ProductDetailPage() {
                  >
                    <div className="relative w-full h-full bg-warm-cream">
                      <Image 
-                        src={img} 
+                        src={img.url} 
                         alt={`Thumbnail ${idx + 1}`}
                         fill
                         className="object-cover"
                      />
                    </div>
-                   {idx === 0 && <div className="absolute bottom-0 left-0 w-full bg-modern-earthy/90 text-warm-cream text-[10px] py-1 text-center uppercase">Detail</div>}
-                   {idx === 1 && <div className="absolute bottom-0 left-0 w-full bg-modern-earthy/90 text-warm-cream text-[10px] py-1 text-center uppercase leading-tight">View in Room</div>}
+                   {img.label && (
+                     <div className="absolute bottom-0 left-0 w-full bg-modern-earthy/90 text-warm-cream text-[10px] py-1 text-center uppercase leading-tight">
+                       {img.label}
+                     </div>
+                   )}
                  </button>
                ))}
             </div>
 
              <div className="flex-1 space-y-6">
-                <div className="relative w-full aspect-[4/3] bg-modern-earthy/20 overflow-hidden group">
+                <div className="relative w-full aspect-4/3 bg-modern-earthy/20 overflow-hidden group">
                      <div className="absolute top-6 right-6 z-10">
                         <button className="bg-warm-cream/80 p-2 rounded-full hover:bg-warm-cream text-saddle-brown transition-colors">
                             <Heart className="w-6 h-6" />
@@ -132,7 +129,7 @@ export default function ProductDetailPage() {
                      
                      <div className="absolute inset-0">
                         <Image 
-                          src={displayImages[selectedImage]} 
+                          src={displayImages[selectedImage].url} 
                           alt={product.name} 
                           fill
                           className="object-cover transition-all duration-500"
@@ -218,7 +215,7 @@ export default function ProductDetailPage() {
                              )}
 
                              {/* Generic Specs */}
-                             {product.specs?.map((spec: any, i: number) => (
+                             {product.specs?.map((spec: { label: string; value: string }, i: number) => (
                                  <div key={i}>
                                      <h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">{spec.label}</h4>
                                      <p className="text-sm font-medium text-modern-earthy">{spec.value}</p>
@@ -246,7 +243,7 @@ export default function ProductDetailPage() {
                  {activeTab === "FINISHES" && (
                     <div className="space-y-6 animate-in fade-in duration-300">
                         <div className="grid grid-cols-2 gap-4">
-                            {finishItems.map((finish: any, idx: number) => (
+                            {finishItems.map((finish: { name: string; description?: string; image?: { url?: string; slug?: string } }, idx: number) => (
                                 <div key={idx} className="space-y-2">
                                     <div className="aspect-square bg-modern-earthy/10 rounded-sm w-full relative overflow-hidden">
                                         {finish.image ? (
@@ -274,10 +271,9 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        {/* Similar Styles & Trims Sections - Moved below main grid */}
+        {/* Similar Styles Section */}
         <div className="mt-20 space-y-12">
             {similarStyles.length > 0 && <SimilarStyles items={similarStyles} />}
-            {trimItems.length > 0 && <Trims items={trimItems} />}
         </div>
         
         {/* Expanded Image Modal */}
@@ -293,7 +289,7 @@ export default function ProductDetailPage() {
                 </button>
                 <div className="relative w-full h-full max-w-7xl max-h-[90vh]">
                      <Image
-                        src={displayImages[selectedImage]}
+                        src={displayImages[selectedImage].url}
                         alt="Expanded View"
                         fill
                         className="object-contain"

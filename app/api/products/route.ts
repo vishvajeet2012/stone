@@ -17,8 +17,7 @@ export async function GET(req: Request) {
     const products = await Product.find(filter)
       .populate('category')
       .populate('images')
-      .populate('finishes.image')
-      .populate('trims.image');
+      .populate('finishes.image');
     
     // If withCategories is true, also fetch categories (for admin page)
     if (withCategories) {
@@ -79,15 +78,6 @@ export async function POST(req: Request) {
       for (const finish of body.finishes) {
         if (finish.image) {
            await ImageModel.findByIdAndUpdate(finish.image, { relatedProduct: product._id });
-        }
-      }
-    }
-
-    // Trims images
-    if (body.trims) {
-      for (const trim of body.trims) {
-        if (trim.image) {
-           await ImageModel.findByIdAndUpdate(trim.image, { relatedProduct: product._id });
         }
       }
     }
