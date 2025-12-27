@@ -41,10 +41,8 @@ export default function AdminProducts() {
     slug: "",
     description: "",
     category: "",
-    category: "",
     isFeatured: false,
     isActive: true,
-    menuOrder: 0,
     specs: [] as { label: string; value: string }[],
     technicalSpecifications: {
       seriesName: "",
@@ -61,7 +59,6 @@ export default function AdminProducts() {
       wall: { residential: true, commercial: false },
     },
     finishes: [] as { name: string; description: string }[],
-    trims: [] as { name: string; dimensions: string; sku: string }[],
   });
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [existingImages, setExistingImages] = useState<any[]>([]);
@@ -94,7 +91,6 @@ export default function AdminProducts() {
             category: typeof product.category === 'object' ? (product.category as any)._id.toString() : product.category as string,
             isFeatured: product.isFeatured || false,
             isActive: product.isActive !== undefined ? product.isActive : true,
-            menuOrder: product.menuOrder || 0,
             specs: product.specs || [],
             technicalSpecifications: {
               seriesName: product.technicalSpecifications?.seriesName || "",
@@ -111,7 +107,6 @@ export default function AdminProducts() {
               wall: { residential: true, commercial: false },
             },
             finishes: product.finishes?.map((f: any) => ({ name: f.name, description: f.description || "" })) || [],
-            trims: product.trims?.map((t: any) => ({ name: t.name, dimensions: t.dimensions, sku: t.sku || "" })) || [],
         });
         setExistingImages(product.images || []);
     } else {
@@ -123,7 +118,6 @@ export default function AdminProducts() {
             category: categories.length > 0 ? (categories[0]._id as any).toString() : "",
             isFeatured: false,
             isActive: true,
-            menuOrder: 0,
             specs: [],
             technicalSpecifications: {
               seriesName: "",
@@ -140,7 +134,6 @@ export default function AdminProducts() {
               wall: { residential: true, commercial: false },
             },
             finishes: [],
-            trims: [],
         });
         setExistingImages([]);
     }
@@ -437,44 +430,67 @@ export default function AdminProducts() {
             <div className="space-y-2">
                 <Label>Product Images</Label>
                 <div className="grid grid-cols-4 gap-4 mb-4">
-                    {existingImages.map((img: any) => (
-                        <div key={img._id} className="relative aspect-square rounded-lg overflow-hidden border border-stone-200 group">
-                             <Image 
-                                src={img.url || (img.slug ? `/api/images/${img.slug}` : "/placeholder.jpg")} 
-                                alt="Existing product image"
-                                fill
-                                className="object-cover"
-                             />
-                             <button
-                                type="button"
-                                onClick={async () => {
-                                    // Optimistic update
-                                    const newImages = existingImages.map(i => ({
-                                        ...i, 
-                                        isProductCard: i._id === img._id
-                                    }));
+                    {existingImages.map((img: any, imgIndex: number) => (
+                        <div key={img._id} className="relative">
+                            <div className="relative aspect-square rounded-lg overflow-hidden border border-stone-200 group">
+                                 <Image 
+                                    src={img.url || (img.slug ? `/api/images/${img.slug}` : "/placeholder.jpg")} 
+                                    alt="Existing product image"
+                                    fill
+                                    className="object-cover"
+                                 />
+                                 <button
+                                    type="button"
+                                    onClick={async () => {
+                                        // Optimistic update
+                                        const newImages = existingImages.map(i => ({
+                                            ...i, 
+                                            isProductCard: i._id === img._id
+                                        }));
+                                        setExistingImages(newImages);
+                                        
+                                        // API call: Unset others, set this one
+                                        try {
+                                            await Promise.all(existingImages.map(i => 
+                                                fetch(`/api/images/${i.slug}`, { 
+                                                    method: 'PUT', 
+                                                    body: JSON.stringify({ isProductCard: i._id === img._id })
+                                                })
+                                            ));
+                                            toast.success("Card Image Updated");
+                                        } catch (_err) {
+                                            toast.error("Failed to update card image");
+                                            fetchData(); // Revert on error
+                                        }
+                                    }}
+                                    className={`absolute top-2 right-2 p-1 rounded-full bg-white/80 transition-colors ${img.isProductCard ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
+                                 >
+                                    <Star fill={img.isProductCard ? "currentColor" : "none"} className="w-5 h-5" />
+                                 </button>
+                            </div>
+                            {/* Image Label Input */}
+                            <Input 
+                                placeholder="Label (e.g. Detail)"
+                                value={img.label || ''}
+                                onChange={(e) => {
+                                    const newImages = [...existingImages];
+                                    newImages[imgIndex] = { ...newImages[imgIndex], label: e.target.value };
                                     setExistingImages(newImages);
-                                    
-                                    // API call: Unset others, set this one
-                                    // For simplicity, we just set this one true. Backend logic usually handles unique if enforced, 
-                                    // but since we rely on manual toggle, we loop nicely.
+                                }}
+                                onBlur={async () => {
+                                    // Save label on blur
                                     try {
-                                        await Promise.all(existingImages.map(i => 
-                                            fetch(`/api/images/${i.slug}`, { 
-                                                method: 'PUT', 
-                                                body: JSON.stringify({ isProductCard: i._id === img._id })
-                                            })
-                                        ));
-                                        toast.success("Card Image Updated");
-                                    } catch (err) {
-                                        toast.error("Failed to update card image");
-                                        fetchData(); // Revert on error
+                                        await fetch(`/api/images/${img.slug}`, { 
+                                            method: 'PUT', 
+                                            body: JSON.stringify({ label: img.label || '' })
+                                        });
+                                        toast.success("Label Updated");
+                                    } catch (_err) {
+                                        toast.error("Failed to update label");
                                     }
                                 }}
-                                className={`absolute top-2 right-2 p-1 rounded-full bg-white/80 transition-colors ${img.isProductCard ? 'text-yellow-500' : 'text-gray-400 hover:text-yellow-500'}`}
-                             >
-                                <Star fill={img.isProductCard ? "currentColor" : "none"} className="w-5 h-5" />
-                             </button>
+                                className="mt-2 h-8 text-xs"
+                            />
                         </div>
                     ))}
                     {selectedImages.map((file, i) => (
@@ -497,17 +513,6 @@ export default function AdminProducts() {
                 {selectedImages.length > 0 && (
                     <p className="text-xs text-green-600">{selectedImages.length} new image(s) selected</p>
                 )}
-            </div>
-
-            {/* Menu Order */}
-            <div className="grid gap-2">
-                <Label htmlFor="menuOrder">Menu Order</Label>
-                <Input 
-                    id="menuOrder" 
-                    type="number" 
-                    value={formData.menuOrder} 
-                    onChange={(e) => setFormData({...formData, menuOrder: parseInt(e.target.value) || 0})}
-                />
             </div>
             
             {/* Applications */}
@@ -595,61 +600,6 @@ export default function AdminProducts() {
                                 setFormData({...formData, finishes: newFinishes});
                             }}
                         />
-                    </div>
-                ))}
-            </div>
-
-            {/* Trims */}
-            <div className="space-y-2 pt-4 border-t border-stone-200">
-                <div className="flex justify-between items-center">
-                    <Label className="text-lg font-semibold">Trims</Label>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setFormData({
-                        ...formData, 
-                        trims: [...formData.trims, { name: "", dimensions: "", sku: "" }]
-                    })}>
-                        Add Trim
-                    </Button>
-                </div>
-                {formData.trims.map((trim, index) => (
-                    <div key={index} className="grid gap-2 border p-3 rounded-lg bg-stone-50">
-                        <div className="flex justify-between">
-                             <Label className="text-xs uppercase font-bold text-stone-500">Trim {index + 1}</Label>
-                             <Button type="button" variant="ghost" size="icon" className="h-6 w-6" onClick={() => {
-                                  const newTrims = formData.trims.filter((_, i) => i !== index);
-                                  setFormData({...formData, trims: newTrims});
-                             }}>
-                                 <Trash2 className="h-4 w-4 text-red-500" />
-                             </Button>
-                        </div>
-                        <div className="grid grid-cols-3 gap-2">
-                            <Input 
-                                placeholder="Trim Name" 
-                                value={trim.name}
-                                onChange={(e) => {
-                                    const newTrims = [...formData.trims];
-                                    newTrims[index].name = e.target.value;
-                                    setFormData({...formData, trims: newTrims});
-                                }}
-                            />
-                            <Input 
-                                placeholder="Dimensions" 
-                                value={trim.dimensions}
-                                onChange={(e) => {
-                                    const newTrims = [...formData.trims];
-                                    newTrims[index].dimensions = e.target.value;
-                                    setFormData({...formData, trims: newTrims});
-                                }}
-                            />
-                            <Input 
-                                placeholder="SKU" 
-                                value={trim.sku}
-                                onChange={(e) => {
-                                    const newTrims = [...formData.trims];
-                                    newTrims[index].sku = e.target.value;
-                                    setFormData({...formData, trims: newTrims});
-                                }}
-                            />
-                        </div>
                     </div>
                 ))}
             </div>

@@ -11,17 +11,17 @@ import {
   Loader2
 } from "lucide-react";
 import { SimilarStyles } from "@/Components/SimilarStyles";
-import { Trims } from "@/Components/Trims";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
+import { IProduct } from "@/model/product";
 
 export default function ProductDetailPage() {
   const params = useParams();
   const productSlug = params?.productSlug as string;
   
-  const [product, setProduct] = useState<any>(null);
+  const [product, setProduct] = useState<IProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("SPECS");
@@ -61,7 +61,7 @@ export default function ProductDetailPage() {
   }
 
   // Parse images with labels
-  const imageData = product.images?.map((img: any) => ({
+  const imageData = product.images?.map((img: { url?: string; slug?: string; label?: string }) => ({
     url: img.url ? img.url : `/api/images/${img.slug}`,
     label: img.label || '' // Dynamic label from database
   })) || [];
@@ -69,20 +69,11 @@ export default function ProductDetailPage() {
   const displayImages = imageData.length > 0 ? imageData : [{ url: "/placeholder.jpg", label: '' }];
 
   // Parse similar styles
-  const similarStyles = product.similarStyles?.map((item: any) => ({
+  const similarStyles = product.similarStyles?.map((item: { _id: string; name: string; images?: { url?: string; slug?: string }[] }) => ({
     id: item._id,
     name: item.name,
     image: item.images?.[0]?.url || (item.images?.[0]?.slug ? `/api/images/${item.images[0].slug}` : "/placeholder.jpg"),
     // collection removed
-  })) || [];
-
-  // Parse trims
-  const trimItems = product.trims?.map((item: any, idx: number) => ({
-    id: item._id || idx,
-    name: item.name,
-    dimensions: item.dimensions,
-    // SKU removed
-    image: item.image?.url || (item.image?.slug ? `/api/images/${item.image.slug}` : "/placeholder.jpg")
   })) || [];
 
   // Parse finishes
@@ -129,7 +120,7 @@ export default function ProductDetailPage() {
             </div>
 
              <div className="flex-1 space-y-6">
-                <div className="relative w-full aspect-[4/3] bg-modern-earthy/20 overflow-hidden group">
+                <div className="relative w-full aspect-4/3 bg-modern-earthy/20 overflow-hidden group">
                      <div className="absolute top-6 right-6 z-10">
                         <button className="bg-warm-cream/80 p-2 rounded-full hover:bg-warm-cream text-saddle-brown transition-colors">
                             <Heart className="w-6 h-6" />
@@ -224,7 +215,7 @@ export default function ProductDetailPage() {
                              )}
 
                              {/* Generic Specs */}
-                             {product.specs?.map((spec: any, i: number) => (
+                             {product.specs?.map((spec: { label: string; value: string }, i: number) => (
                                  <div key={i}>
                                      <h4 className="text-xs font-bold text-modern-earthy/60 uppercase mb-1">{spec.label}</h4>
                                      <p className="text-sm font-medium text-modern-earthy">{spec.value}</p>
@@ -252,7 +243,7 @@ export default function ProductDetailPage() {
                  {activeTab === "FINISHES" && (
                     <div className="space-y-6 animate-in fade-in duration-300">
                         <div className="grid grid-cols-2 gap-4">
-                            {finishItems.map((finish: any, idx: number) => (
+                            {finishItems.map((finish: { name: string; description?: string; image?: { url?: string; slug?: string } }, idx: number) => (
                                 <div key={idx} className="space-y-2">
                                     <div className="aspect-square bg-modern-earthy/10 rounded-sm w-full relative overflow-hidden">
                                         {finish.image ? (
@@ -280,10 +271,9 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        {/* Similar Styles & Trims Sections - Moved below main grid */}
+        {/* Similar Styles Section */}
         <div className="mt-20 space-y-12">
             {similarStyles.length > 0 && <SimilarStyles items={similarStyles} />}
-            {trimItems.length > 0 && <Trims items={trimItems} />}
         </div>
         
         {/* Expanded Image Modal */}

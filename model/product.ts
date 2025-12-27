@@ -22,16 +22,9 @@ export interface IProduct extends Document {
     wall: { residential: boolean; commercial: boolean };
   };
   finishes: { name: string; description?: string; image?: mongoose.Types.ObjectId }[];
-  trims: {
-    name: string;
-    sku?: string;
-    dimensions: string;
-    image: mongoose.Types.ObjectId;
-  }[];
   similarStyles: mongoose.Types.ObjectId[];
   isFeatured: boolean;
   isActive: boolean;
-  menuOrder?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -84,16 +77,9 @@ const ProductSchema: Schema<IProduct> = new Schema(
         commercial: { type: Boolean, default: false },
       },
     },
-    trims: [{ 
-      name: String,
-      sku: String,
-      dimensions: String, 
-      image: { type: Schema.Types.ObjectId, ref: "Image" } 
-    }],
     similarStyles: [{ type: Schema.Types.ObjectId, ref: "Product" }],
     isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
-    menuOrder: { type: Number, default: 0 },
   },
   { timestamps: true }
 );
