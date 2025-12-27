@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
-import Project from "@/model/project";
+import Project, { IProject } from "@/model/project";
 import ImageModel from "@/model/image";
 import { slugify } from "@/lib/utils";
 import { verifyAdmin } from "@/lib/auth-server";
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
       body.slug = slugify(body.title);
     }
 
-    const project = await Project.create(body) as import("@/model/project").IProject;
+    const project = await Project.create(body) as unknown as IProject;
 
     // Link image to project
     if (body.image) {
