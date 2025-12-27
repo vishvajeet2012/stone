@@ -21,7 +21,7 @@ export default async function CategoryPage({
       <CategoryDescription categoryName={categoryName} />
       <ExportInfo />
       <div className="space-y-4">
-        {/* <SubCategoryList /> */}
+       
         <CategoryProducts categorySlug={slug} />
       </div>
     </main>
