@@ -5,6 +5,7 @@ import { MapPin, Phone, Mail, Loader2 } from "lucide-react";
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import { toast } from "sonner";
+import axios from "axios";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -26,22 +27,20 @@ export default function ContactUs() {
 
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, phone }),
-      });
-      const data = await res.json();
+      const response = await axios.post("/api/contact", { ...formData, phone });
       
-      if (data.success) {
+      if (response.data.success) {
         toast.success("Message sent successfully! We'll get back to you soon.");
         setFormData({ name: "", email: "", subject: "General Inquiry", message: "" });
         setPhone(undefined);
       } else {
-        toast.error(data.error || "Failed to send message");
+        toast.error(response.data.error || "Failed to send message");
       }
-    } catch (_error) {
-      toast.error("Something went wrong. Please try again.");
+    } catch (error: unknown) {
+      const errorMessage = axios.isAxiosError(error) && error.response?.data?.error 
+        ? error.response.data.error 
+        : "Something went wrong. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
