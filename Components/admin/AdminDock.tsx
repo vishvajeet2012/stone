@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { cn } from "@/lib/utils";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, MotionValue } from "framer-motion";
 
 
 import {
