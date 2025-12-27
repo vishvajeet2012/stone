@@ -8,17 +8,15 @@ import { motion, useMotionValue, useSpring, useTransform, MotionValue } from "fr
 
 
 import {
-  LayoutDashboard,
-  Users,
   Package,
-  BarChart3,
   Mail,
   LogOut,
   Palette,
   User,
   FileText,
   Briefcase,
-  Grid
+  Grid,
+  LayoutDashboard
 } from "lucide-react";
 import api from "@/lib/axios";
 
@@ -41,15 +39,13 @@ export default function AdminDock() {
 
   const icons = [
     { title: "Dashboard", icon: LayoutDashboard, href: "/admin" },
-    { title: "Users", icon: Users, href: "/admin/users" },
     { title: "Products", icon: Package, href: "/admin/products" },
-    { title: "Projects", icon: Briefcase, href: "/admin/projects" },
     { title: "Categories", icon: Grid, href: "/admin/categories" },
-    { title: "Analytics", icon: BarChart3, href: "/admin/analytics" },
-    { title: "Blogs", icon: FileText, href: "/admin/blogs" },
+    { title: "Projects", icon: Briefcase, href: "/admin/projects" },
     { title: "Inquiries", icon: Mail, href: "/admin/inquiries" },
+    { title: "Blogs", icon: FileText, href: "/admin/blogs" },
     { title: "Theme", icon: Palette, href: "/admin/theme" },
-    { title: "Profile", icon: User, href: "/admin/profile" }, // Changed to Profile
+    { title: "Settings", icon: User, href: "/admin/settings" },
   ];
 
   return (
@@ -105,8 +101,8 @@ function DockIcon({
     return val - bounds.x - bounds.width / 2;
   });
 
-  const widthSync = useTransform(distance, [-150, 0, 150], [50, 80, 50]);
-  const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 });
+  const widthSync = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+  const width = useSpring(widthSync, { mass: 0.1, stiffness: 400, damping: 12 });
 
   return (
     <Link href={href}>
@@ -114,7 +110,7 @@ function DockIcon({
         ref={ref}
         style={{ width }}
         className={cn(
-            "aspect-square rounded-xl border flex items-center justify-center relative group cursor-pointer shadow-lg transition-all duration-300",
+            "aspect-square rounded-xl border flex items-center justify-center relative group cursor-pointer shadow-lg transition-all duration-150",
             isActive 
                 ? "bg-saddle-brown border-white/40 shadow-white/10 scale-110 ring-2 ring-white/20" 
                 : "bg-saddle-brown/90 hover:bg-saddle-brown border-white/10 hover:border-white/30"

@@ -3,22 +3,23 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IProject extends Document {
   title: string;
   slug: string;
-  category: mongoose.Types.ObjectId; // Link to Category
+  category: mongoose.Types.ObjectId;
   location?: string;
   
-  // Products Used
+
   products: mongoose.Types.ObjectId[]; 
   stoneUsed?: string; 
 
-  // Detailed Info
+
   finish?: string;
   application?: string;
   architect?: string;
   completionYear?: string;
   
   description: string;
-  image: string; 
-  gallery: string[];
+  images: mongoose.Types.ObjectId[];
+  BannerImages: mongoose.Types.ObjectId[];
+  gallery: mongoose.Types.ObjectId[];
   isFeatured: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -53,8 +54,12 @@ const ProjectSchema: Schema<IProject> = new Schema(
     architect: { type: String, trim: true },
     completionYear: { type: String, trim: true },
     description: { type: String, required: true },
-    image: { type: String, required: true },
-    gallery: { type: [String], default: [] },
+    images: [{ 
+      type: Schema.Types.ObjectId, 
+      ref: "Image",
+    }],
+    BannerImages: [{ type: Schema.Types.ObjectId, ref: "Image" }],
+    gallery: [{ type: Schema.Types.ObjectId, ref: "Image" }],
     isFeatured: { type: Boolean, default: false },
   },
   { timestamps: true }
