@@ -15,17 +15,12 @@ export const api = {
       const { data } = await axios.get<{ success: boolean; data: IProduct }>(`${API_BASE}/products/${slug}`);
       return data.data;
     },
-    create: async (formData: FormData) => {
-       // Note: Sending FormData for file uploads
-      const { data } = await axios.post<{ success: boolean; data: IProduct }>(`${API_BASE}/products`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+    create: async (dataBody: any) => {
+      const { data } = await axios.post<{ success: boolean; data: IProduct }>(`${API_BASE}/products`, dataBody);
       return data.data;
     },
-    update: async (slug: string, formData: FormData) => {
-      const { data } = await axios.put<{ success: boolean; data: IProduct }>(`${API_BASE}/products/${slug}`, formData, {
-         headers: { "Content-Type": "multipart/form-data" },
-      });
+    update: async (slug: string, dataBody: any) => {
+      const { data } = await axios.put<{ success: boolean; data: IProduct }>(`${API_BASE}/products/${slug}`, dataBody);
       return data.data;
     },
     delete: async (slug: string) => {

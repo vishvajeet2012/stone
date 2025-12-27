@@ -20,6 +20,8 @@ export async function GET(
     const headers = new Headers();
     headers.set("Content-Type", image.contentType);
     headers.set("Content-Length", image.size.toString());
+    // Cache for 1 year (immutable images - slug-based)
+    headers.set("Cache-Control", "public, max-age=31536000, immutable");
 
     return new NextResponse(image.data as any, {
       status: 200,

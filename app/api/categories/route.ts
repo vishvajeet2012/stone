@@ -3,6 +3,7 @@ import dbConnect from "@/lib/db";
 import Category from "@/model/category";
 import { slugify } from "@/lib/utils";
 import ImageModel from "@/model/image";
+import { menuCache, CACHE_KEYS } from "@/lib/cache";
 
 export async function GET(_req: Request) {
   try {
@@ -45,6 +46,9 @@ export async function POST(req: Request) {
         { relatedCategory: category._id }
       );
     }
+
+    // Invalidate menu cache
+    menuCache.invalidate(CACHE_KEYS.MENU);
 
     return NextResponse.json({ success: true, data: category }, { status: 201 });
   } catch (_error) {

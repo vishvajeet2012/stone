@@ -41,9 +41,16 @@ export default function AdminProducts() {
     description: "",
     category: "",
     isFeatured: false,
+    menuOrder: 0,
     specs: [] as { label: string; value: string }[],
+    applications: {
+      flooring: { residential: true, commercial: false },
+      wall: { residential: true, commercial: false },
+    },
+    finishes: [] as { name: string }[],
+    trims: [] as { name: string; dimensions: string }[],
   });
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
 
   const fetchData = async () => {
     try {
@@ -74,7 +81,14 @@ export default function AdminProducts() {
             description: product.description,
             category: typeof product.category === 'object' ? (product.category as any)._id.toString() : product.category as string,
             isFeatured: product.isFeatured || false,
+            menuOrder: product.menuOrder || 0,
             specs: product.specs || [],
+            applications: product.applications || {
+              flooring: { residential: true, commercial: false },
+              wall: { residential: true, commercial: false },
+            },
+            finishes: product.finishes?.map(f => ({ name: f.name })) || [],
+            trims: product.trims?.map(t => ({ name: t.name, dimensions: t.dimensions })) || [],
         });
     } else {
         setEditingId(null);
@@ -84,10 +98,17 @@ export default function AdminProducts() {
             description: "",
             category: categories.length > 0 ? (categories[0]._id as any).toString() : "",
             isFeatured: false,
+            menuOrder: 0,
             specs: [],
+            applications: {
+              flooring: { residential: true, commercial: false },
+              wall: { residential: true, commercial: false },
+            },
+            finishes: [],
+            trims: [],
         });
     }
-    setSelectedImage(null);
+    setSelectedImages([]);
     setIsDialogOpen(true);
   };
 
@@ -97,9 +118,10 @@ export default function AdminProducts() {
 
     try {
         const imageIds: string[] = [];
-        if (selectedImage) {
+        // Upload all selected images
+        for (const file of selectedImages) {
             const imgData = new FormData();
-            imgData.append("file", selectedImage);
+            imgData.append("file", file);
             const imgRes = await fetch("/api/images", { method: "POST", body: imgData });
             if (!imgRes.ok) throw new Error("Failed to upload image");
             const imgJson = await imgRes.json();
@@ -319,15 +341,148 @@ export default function AdminProducts() {
                 ))}
             </div>
 
-            {/* Main Image */}
+            {/* Product Images */}
             <div className="space-y-2">
-                <Label>Main Product Image</Label>
-                <Input type="file" accept="image/*" onChange={(e) => setSelectedImage(e.target.files?.[0] || null)} />
-                <p className="text-xs text-gray-500">Currently only one main image is supported via this form for simplicity. Existing images will be preserved if left blank.</p>
+                <Label>Product Images</Label>
+                <Input 
+                    type="file" 
+                    accept="image/*" 
+                    multiple
+                    onChange={(e) => setSelectedImages(Array.from(e.target.files || []))} 
+                />
+                <p className="text-xs text-gray-500">You can select multiple images. Existing images will be preserved if left blank.</p>
+                {selectedImages.length > 0 && (
+                    <p className="text-xs text-green-600">{selectedImages.length} image(s) selected</p>
+                )}
+            </div>
+
+            {/* Menu Order */}
+            <div className="grid gap-2">
+                <Label htmlFor="menuOrder">Menu Order</Label>
+                <Input 
+                    id="menuOrder" 
+                    type="number" 
+                    value={formData.menuOrder} 
+                    onChange={(e) => setFormData({...formData, menuOrder: parseInt(e.target.value) || 0})}
+                />
             </div>
             
-            <div className="pt-4 border-t border-stone-200">
-                <p className="text-sm text-gray-500 mb-2">Note: Complex fields (Specs, Finishes, Trims, Images) can be added after creating the product.</p>
+            {/* Applications */}
+            <div className="space-y-3 pt-4 border-t border-stone-200">
+                <Label className="text-lg font-semibold">Applications</Label>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2 p-3 bg-stone-50 rounded-lg">
+                        <p className="font-medium text-sm">Flooring</p>
+                        <div className="flex items-center space-x-2">
+                            <input type="checkbox" id="flooring-residential" 
+                                checked={formData.applications.flooring.residential}
+                                onChange={(e) => setFormData({...formData, applications: {...formData.applications, flooring: {...formData.applications.flooring, residential: e.target.checked}}})}
+                                className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
+                            />
+                            <Label htmlFor="flooring-residential" className="text-sm">Residential</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <input type="checkbox" id="flooring-commercial"
+                                checked={formData.applications.flooring.commercial}
+                                onChange={(e) => setFormData({...formData, applications: {...formData.applications, flooring: {...formData.applications.flooring, commercial: e.target.checked}}})}
+                                className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
+                            />
+                            <Label htmlFor="flooring-commercial" className="text-sm">Commercial</Label>
+                        </div>
+                    </div>
+                    <div className="space-y-2 p-3 bg-stone-50 rounded-lg">
+                        <p className="font-medium text-sm">Wall</p>
+                        <div className="flex items-center space-x-2">
+                            <input type="checkbox" id="wall-residential"
+                                checked={formData.applications.wall.residential}
+                                onChange={(e) => setFormData({...formData, applications: {...formData.applications, wall: {...formData.applications.wall, residential: e.target.checked}}})}
+                                className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
+                            />
+                            <Label htmlFor="wall-residential" className="text-sm">Residential</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <input type="checkbox" id="wall-commercial"
+                                checked={formData.applications.wall.commercial}
+                                onChange={(e) => setFormData({...formData, applications: {...formData.applications, wall: {...formData.applications.wall, commercial: e.target.checked}}})}
+                                className="rounded border-gray-300 text-saddle-brown focus:ring-saddle-brown"
+                            />
+                            <Label htmlFor="wall-commercial" className="text-sm">Commercial</Label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Finishes */}
+            <div className="space-y-2 pt-4 border-t border-stone-200">
+                <div className="flex justify-between items-center">
+                    <Label className="text-lg font-semibold">Finishes</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setFormData({
+                        ...formData, 
+                        finishes: [...formData.finishes, { name: "" }]
+                    })}>
+                        Add Finish
+                    </Button>
+                </div>
+                {formData.finishes.map((finish, index) => (
+                    <div key={index} className="flex gap-2">
+                        <Input 
+                            placeholder="Finish Name (e.g. Polished)" 
+                            value={finish.name}
+                            onChange={(e) => {
+                                const newFinishes = [...formData.finishes];
+                                newFinishes[index].name = e.target.value;
+                                setFormData({...formData, finishes: newFinishes});
+                            }}
+                        />
+                        <Button type="button" variant="ghost" size="icon" onClick={() => {
+                             const newFinishes = formData.finishes.filter((_, i) => i !== index);
+                             setFormData({...formData, finishes: newFinishes});
+                        }}>
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                    </div>
+                ))}
+            </div>
+
+            {/* Trims */}
+            <div className="space-y-2 pt-4 border-t border-stone-200">
+                <div className="flex justify-between items-center">
+                    <Label className="text-lg font-semibold">Trims</Label>
+                    <Button type="button" variant="outline" size="sm" onClick={() => setFormData({
+                        ...formData, 
+                        trims: [...formData.trims, { name: "", dimensions: "" }]
+                    })}>
+                        Add Trim
+                    </Button>
+                </div>
+                {formData.trims.map((trim, index) => (
+                    <div key={index} className="flex gap-2">
+                        <Input 
+                            placeholder="Trim Name" 
+                            value={trim.name}
+                            onChange={(e) => {
+                                const newTrims = [...formData.trims];
+                                newTrims[index].name = e.target.value;
+                                setFormData({...formData, trims: newTrims});
+                            }}
+                        />
+                        <Input 
+                            placeholder="Dimensions" 
+                            value={trim.dimensions}
+                            onChange={(e) => {
+                                const newTrims = [...formData.trims];
+                                newTrims[index].dimensions = e.target.value;
+                                setFormData({...formData, trims: newTrims});
+                            }}
+                        />
+                        <Button type="button" variant="ghost" size="icon" onClick={() => {
+                             const newTrims = formData.trims.filter((_, i) => i !== index);
+                             setFormData({...formData, trims: newTrims});
+                        }}>
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                    </div>
+                ))}
             </div>
 
             <div className="flex justify-end gap-3 mt-6">

@@ -15,7 +15,6 @@ export interface IProduct extends Document {
   trims: {
     name: string;
     dimensions: string;
-    sku: string;
     image: mongoose.Types.ObjectId;
   }[];
   similarStyles: mongoose.Types.ObjectId[];
@@ -65,7 +64,6 @@ const ProductSchema: Schema<IProduct> = new Schema(
     trims: [{ 
       name: String, 
       dimensions: String, 
-      sku: String, 
       image: { type: Schema.Types.ObjectId, ref: "Image" } 
     }],
     similarStyles: [{ type: Schema.Types.ObjectId, ref: "Product" }],

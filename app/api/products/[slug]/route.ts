@@ -3,6 +3,7 @@ import dbConnect from "@/lib/db";
 import Product from "@/model/product";
 import ImageModel from "@/model/image";
 import { verifyAdmin } from "@/lib/auth-server";
+import { menuCache, CACHE_KEYS } from "@/lib/cache";
 
 export async function GET(
   req: Request,
@@ -76,6 +77,9 @@ export async function PUT(
       }
     }
 
+    // Invalidate menu cache
+    menuCache.invalidate(CACHE_KEYS.MENU);
+
     return NextResponse.json({ success: true, data: product });
   } catch (_error) {
     return NextResponse.json({ success: false, error: "Failed to update product" }, { status: 400 });
@@ -123,6 +127,9 @@ export async function DELETE(
     }
 
     await Product.findOneAndDelete({ slug });
+
+    // Invalidate menu cache
+    menuCache.invalidate(CACHE_KEYS.MENU);
 
     return NextResponse.json({ success: true, data: {} });
   } catch (_error) {

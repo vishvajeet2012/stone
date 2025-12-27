@@ -3,6 +3,7 @@ import dbConnect from "@/lib/db";
 import Category from "@/model/category";
 import { verifyAdmin } from "@/lib/auth-server";
 import ImageModel from "@/model/image";
+import { menuCache, CACHE_KEYS } from "@/lib/cache";
 
 export async function GET(
   req: Request,
@@ -47,6 +48,9 @@ export async function PUT(
       return NextResponse.json({ success: false, error: "Category not found" }, { status: 404 });
     }
 
+    // Invalidate menu cache
+    menuCache.invalidate(CACHE_KEYS.MENU);
+
     return NextResponse.json({ success: true, data: category });
   } catch (_error) {
     return NextResponse.json({ success: false, error: "Failed to update category" }, { status: 400 });
@@ -83,6 +87,9 @@ export async function DELETE(
     }
 
     await Category.findOneAndDelete({ slug });
+
+    // Invalidate menu cache
+    menuCache.invalidate(CACHE_KEYS.MENU);
 
     return NextResponse.json({ success: true, data: {} });
   } catch (_error) {
