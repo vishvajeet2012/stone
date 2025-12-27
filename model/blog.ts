@@ -10,6 +10,14 @@ export interface IBlog extends Document {
   tags: string[];
   isPublished: boolean;
   publishedAt?: Date;
+  // SEO Fields
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    metaKeywords?: string[];
+    canonicalUrl?: string;
+    ogImage?: mongoose.Types.ObjectId;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,6 +61,14 @@ const BlogSchema: Schema<IBlog> = new Schema(
     },
     publishedAt: {
       type: Date,
+    },
+    // SEO Fields
+    seo: {
+      metaTitle: { type: String, maxlength: 60 },
+      metaDescription: { type: String, maxlength: 160 },
+      metaKeywords: [{ type: String }],
+      canonicalUrl: { type: String },
+      ogImage: { type: Schema.Types.ObjectId, ref: "Image" },
     },
   },
   { timestamps: true }
