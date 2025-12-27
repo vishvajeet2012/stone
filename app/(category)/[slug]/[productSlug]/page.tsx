@@ -15,13 +15,39 @@ import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
-import { IProduct } from "@/model/product";
+
+// Interface for populated product data from API
+interface ProductData {
+  _id: string;
+  name: string;
+  slug: string;
+  description: string;
+  category?: { _id: string; name: string; slug: string };
+  images?: { _id: string; url?: string; slug?: string; label?: string }[];
+  similarStyles?: { _id: string; name: string; images?: { url?: string; slug?: string }[] }[];
+  finishes?: { name: string; description?: string; image?: { url?: string; slug?: string } }[];
+  specs?: { label: string; value: string }[];
+  technicalSpecifications?: {
+    seriesName?: string;
+    primaryColor?: string;
+    thickness?: string;
+    style?: string;
+    wearLayer?: string;
+    environmental?: string;
+    radiantHeating?: string;
+    additionalResources?: string;
+  };
+  applications?: {
+    flooring?: { residential?: boolean; commercial?: boolean };
+    wall?: { residential?: boolean; commercial?: boolean };
+  };
+}
 
 export default function ProductDetailPage() {
   const params = useParams();
   const productSlug = params?.productSlug as string;
   
-  const [product, setProduct] = useState<IProduct | null>(null);
+  const [product, setProduct] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState(true);
   const [isExpanded, setIsExpanded] = useState(false);
   const [activeTab, setActiveTab] = useState<string>("SPECS");

@@ -1,12 +1,51 @@
 ﻿"use client";
 
 import React, { useState } from "react";
-import { MapPin, Phone, Mail } from "lucide-react";
+import { MapPin, Phone, Mail, Loader2 } from "lucide-react";
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import { toast } from "sonner";
 
 export default function ContactUs() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    subject: "General Inquiry",
+    message: "",
+  });
   const [phone, setPhone] = useState<string | undefined>();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!formData.name || !formData.email || !formData.message) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, phone }),
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        toast.success("Message sent successfully! We'll get back to you soon.");
+        setFormData({ name: "", email: "", subject: "General Inquiry", message: "" });
+        setPhone(undefined);
+      } else {
+        toast.error(data.error || "Failed to send message");
+      }
+    } catch (_error) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section className="w-full bg-warm-cream py-20 px-4 md:px-8 relative overflow-hidden">
@@ -28,7 +67,7 @@ export default function ContactUs() {
         {/* Left: Contact Info */}
         <div className="space-y-8">
             <div>
-                <span className="text-modern-earthy text-xs font-bold   tracking-widest uppercase mb-2 block">
+                <span className="text-modern-earthy text-xs font-bold tracking-widest uppercase mb-2 block">
                     Get in Touch
                 </span>
                 <h2 className="text-4xl md:text-6xl font-playfair font-bold text-saddle-brown mb-6">
@@ -72,15 +111,29 @@ export default function ContactUs() {
 
         {/* Right: Contact Form */}
         <div className="bg-white p-8 md:p-10 rounded-2xl shadow-xl border border-saddle-brown/10">
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-saddle-brown uppercase tracking-wider">Name</label>
-                        <input type="text" className="w-full bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus:outline-hidden focus:border-saddle-brown transition-colors" placeholder="John Doe" />
+                        <label className="text-sm font-bold text-saddle-brown uppercase tracking-wider">Name *</label>
+                        <input 
+                          type="text" 
+                          value={formData.name}
+                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                          className="w-full bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus:outline-hidden focus:border-saddle-brown transition-colors" 
+                          placeholder="John Doe" 
+                          required
+                        />
                     </div>
                     <div className="space-y-2">
-                        <label className="text-sm font-bold text-saddle-brown uppercase tracking-wider">Email</label>
-                        <input type="email" className="w-full bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus:outline-hidden focus:border-saddle-brown transition-colors" placeholder="john@example.com" />
+                        <label className="text-sm font-bold text-saddle-brown uppercase tracking-wider">Email *</label>
+                        <input 
+                          type="email" 
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          className="w-full bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus:outline-hidden focus:border-saddle-brown transition-colors" 
+                          placeholder="john@example.com" 
+                          required
+                        />
                     </div>
                 </div>
 
@@ -98,7 +151,6 @@ export default function ContactUs() {
                         />
                     </div>
                      <style jsx global>{`
-
                         .PhoneInputInput {
                             background-color: transparent;
                             border: none;
@@ -111,7 +163,7 @@ export default function ContactUs() {
                             height: 18px;
                         }
                         .PhoneInputCountryIconImg {
-                            display: block; /* Ensure it's visible */
+                            display: block;
                             width: 100%;
                             height: 100%;
                         }
@@ -119,7 +171,6 @@ export default function ContactUs() {
                             background-color: transparent;
                             color: black;
                         }
-                        /* Custom arrow styling if needed, or default */
                         .PhoneInputCountrySelectArrow {
                             color: #8B4513;
                             opacity: 0.7;
@@ -129,7 +180,11 @@ export default function ContactUs() {
                 
                 <div className="space-y-2">
                     <label className="text-sm font-bold text-saddle-brown uppercase tracking-wider">Subject</label>
-                     <select className="w-full bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus:outline-hidden focus:border-saddle-brown transition-colors">
+                     <select 
+                       value={formData.subject}
+                       onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                       className="w-full bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus:outline-hidden focus:border-saddle-brown transition-colors"
+                     >
                         <option>General Inquiry</option>
                         <option>Project Consultation</option>
                         <option>Bulk Order</option>
@@ -138,12 +193,23 @@ export default function ContactUs() {
                 </div>
 
                 <div className="space-y-2">
-                    <label className="text-sm font-bold text-saddle-brown uppercase tracking-wider">Message</label>
-                    <textarea className="w-full bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus:outline-hidden focus:border-saddle-brown transition-colors h-32 resize-none" placeholder="Tell us about your project..."></textarea>
+                    <label className="text-sm font-bold text-saddle-brown uppercase tracking-wider">Message *</label>
+                    <textarea 
+                      value={formData.message}
+                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                      className="w-full bg-warm-cream/50 border border-saddle-brown/20 rounded-lg p-3 text-saddle-brown focus:outline-hidden focus:border-saddle-brown transition-colors h-32 resize-none" 
+                      placeholder="Tell us about your project..."
+                      required
+                    ></textarea>
                 </div>
 
-                <button type="button" className="w-full bg-saddle-brown text-warm-cream font-bold py-4 rounded-lg hover:bg-saddle-brown/90 transition-colors uppercase tracking-widest shadow-lg transform active:scale-95 duration-200">
-                    Send Message
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="w-full bg-saddle-brown text-warm-cream font-bold py-4 rounded-lg hover:bg-saddle-brown/90 transition-colors uppercase tracking-widest shadow-lg transform active:scale-95 duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                    {isSubmitting && <Loader2 className="w-5 h-5 animate-spin" />}
+                    {isSubmitting ? "Sending..." : "Send Message"}
                 </button>
             </form>
         </div>
@@ -152,3 +218,4 @@ export default function ContactUs() {
     </section>
   );
 }
+

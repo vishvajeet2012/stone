@@ -42,7 +42,7 @@ export default function AdminDock() {
     { title: "Products", icon: Package, href: "/admin/products" },
     { title: "Categories", icon: Grid, href: "/admin/categories" },
     { title: "Projects", icon: Briefcase, href: "/admin/projects" },
-    { title: "Inquiries", icon: Mail, href: "/admin/inquiries" },
+    { title: "Contacts", icon: Mail, href: "/admin/contacts" },
     { title: "Blogs", icon: FileText, href: "/admin/blogs" },
     { title: "Theme", icon: Palette, href: "/admin/theme" },
     { title: "Settings", icon: User, href: "/admin/settings" },
