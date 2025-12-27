@@ -3,12 +3,22 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IProject extends Document {
   title: string;
   slug: string;
-  category: "residential" | "commercial" | "international";
+  category: mongoose.Types.ObjectId; // Link to Category
   location?: string;
-  stoneUsed?: string; // Could be an array if multiple stones are used
+  
+  // Products Used
+  products: mongoose.Types.ObjectId[]; 
+  stoneUsed?: string; 
+
+  // Detailed Info
+  finish?: string;
+  application?: string;
+  architect?: string;
+  completionYear?: string;
+  
   description: string;
-  image: string; // Cover image URL
-  gallery: string[]; // Array of image URLs
+  image: string; 
+  gallery: string[];
   isFeatured: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -26,45 +36,29 @@ const ProjectSchema: Schema<IProject> = new Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      required: [true, "Slug is required"],
+      index: true, // Explicitly indexed for faster lookup
     },
     category: {
-      type: String,
-      required: [true, "Category is required"],
-      enum: ["residential", "commercial", "international"],
+      type: Schema.Types.ObjectId, 
+      ref: "Category",
+      required: [true, "Project Category is required"],
       index: true,
     },
-    location: {
-      type: String,
-      trim: true,
-    },
-    stoneUsed: {
-      type: String,
-      trim: true,
-    },
-    description: {
-      type: String,
-      required: [true, "Description is required"],
-    },
-    image: {
-      type: String,
-      required: [true, "Cover image is required"],
-    },
-    gallery: {
-      type: [String],
-      default: [],
-    },
-    isFeatured: {
-      type: Boolean,
-      default: false,
-    },
+    location: { type: String, trim: true },
+    stoneUsed: { type: String, trim: true },
+    products: [{ type: Schema.Types.ObjectId, ref: "Product" }],
+    finish: { type: String, trim: true },
+    application: { type: String, trim: true },
+    architect: { type: String, trim: true },
+    completionYear: { type: String, trim: true },
+    description: { type: String, required: true },
+    image: { type: String, required: true },
+    gallery: { type: [String], default: [] },
+    isFeatured: { type: Boolean, default: false },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-// Prevent re-compilation of the model if it already exists
-const Project: Model<IProject> =
-  mongoose.models.Project || mongoose.model<IProject>("Project", ProjectSchema);
-
+const Project: Model<IProject> = mongoose.models.Project || mongoose.model<IProject>("Project", ProjectSchema);
 export default Project;

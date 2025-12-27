@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 
 export interface IProduct extends Document {
   name: string;
-  slug: string;
+  slug: string; // Used for lookup instead of ID
   category: mongoose.Types.ObjectId;
   images: string[];
   description: string;
@@ -36,26 +36,16 @@ const ProductSchema: Schema<IProduct> = new Schema(
       lowercase: true,
       trim: true,
       required: [true, "Slug is required"],
+      index: true,
     },
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
       required: [true, "Product must belong to a category"],
     },
-    images: {
-      type: [String], // Array of image URLs
-      default: [],
-    },
-    description: {
-      type: String,
-      required: [true, "Description is required"],
-    },
-    specs: [
-      {
-        label: { type: String, required: true },
-        value: { type: String, required: true },
-      },
-    ],
+    images: { type: [String], default: [] },
+    description: { type: String, required: true },
+    specs: [{ label: String, value: String }],
     applications: {
       flooring: {
         residential: { type: Boolean, default: true },
@@ -66,33 +56,12 @@ const ProductSchema: Schema<IProduct> = new Schema(
         commercial: { type: Boolean, default: false },
       },
     },
-    finishes: [
-      {
-        name: { type: String, required: true },
-        image: { type: String }, // Optional image for the finish look
-      },
-    ],
-    trims: [
-      {
-        name: { type: String, required: true },
-        dimensions: { type: String, required: true },
-        sku: { type: String, required: true },
-        image: { type: String, required: true },
-      },
-    ],
-    similarStyles: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    ],
+    finishes: [{ name: String, image: String }],
+    trims: [{ name: String, dimensions: String, sku: String, image: String }],
+    similarStyles: [{ type: Schema.Types.ObjectId, ref: "Product" }],
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const Product: Model<IProduct> =
-  mongoose.models.Product || mongoose.model<IProduct>("Product", ProductSchema);
-
+const Product: Model<IProduct> = mongoose.models.Product || mongoose.model<IProduct>("Product", ProductSchema);
 export default Product;

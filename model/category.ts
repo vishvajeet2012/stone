@@ -3,8 +3,8 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface ICategory extends Document {
   name: string;
   slug: string;
-  parentCategory?: mongoose.Types.ObjectId; // For hierarchy (e.g. Stone Collection -> Sandstone)
-  type: "stone" | "service" | "collection";
+  parentCategory?: mongoose.Types.ObjectId; 
+  type: "stone" | "service" | "collection" | "project";
   description?: string;
   image?: string;
   subCategories?: { label: string; href: string }[];
@@ -26,6 +26,7 @@ const CategorySchema: Schema<ICategory> = new Schema(
       lowercase: true,
       trim: true,
       required: [true, "Slug is required"],
+      index: true,
     },
     parentCategory: {
       type: Schema.Types.ObjectId,
@@ -34,16 +35,11 @@ const CategorySchema: Schema<ICategory> = new Schema(
     },
     type: {
       type: String,
-      enum: ["stone", "service", "collection"],
+      enum: ["stone", "service", "collection", "project"],
       default: "stone",
     },
-    description: {
-      type: String,
-      trim: true,
-    },
-    image: {
-      type: String,
-    },
+    description: { type: String, trim: true },
+    image: { type: String },
     subCategories: [
       {
         label: { type: String, required: true },
@@ -51,12 +47,8 @@ const CategorySchema: Schema<ICategory> = new Schema(
       },
     ],
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
-const Category: Model<ICategory> =
-  mongoose.models.Category || mongoose.model<ICategory>("Category", CategorySchema);
-
+const Category: Model<ICategory> = mongoose.models.Category || mongoose.model<ICategory>("Category", CategorySchema);
 export default Category;

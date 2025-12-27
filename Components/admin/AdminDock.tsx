@@ -16,7 +16,9 @@ import {
   LogOut,
   Palette,
   User,
-  FileText
+  FileText,
+  Briefcase,
+  Grid
 } from "lucide-react";
 import api from "@/lib/axios";
 
@@ -41,6 +43,8 @@ export default function AdminDock() {
     { title: "Dashboard", icon: LayoutDashboard, href: "/admin" },
     { title: "Users", icon: Users, href: "/admin/users" },
     { title: "Products", icon: Package, href: "/admin/products" },
+    { title: "Projects", icon: Briefcase, href: "/admin/projects" },
+    { title: "Categories", icon: Grid, href: "/admin/categories" },
     { title: "Analytics", icon: BarChart3, href: "/admin/analytics" },
     { title: "Blogs", icon: FileText, href: "/admin/blogs" },
     { title: "Inquiries", icon: Mail, href: "/admin/inquiries" },
@@ -69,7 +73,7 @@ export default function AdminDock() {
       ))}
       
       {/* Separator */}
-      <div className="w-[1px] h-10 bg-white/20 mx-1" />
+      <div className="w-px h-10 bg-white/20 mx-1" />
 
        <div onClick={handleLogout}> {/* Wrap in div for click handler, keep DockIcon styling if possible, but DockIcon uses Link. Let's make DockIcon accept onClick or handle it here. */}
            <DockIcon mouseX={mouseX} title="Logout" href="#" isActive={false}>
@@ -88,7 +92,7 @@ function DockIcon({
     href, 
     isActive 
 }: { 
-    mouseX: any, 
+    mouseX: MotionValue<number>, 
     title: string, 
     children: React.ReactNode, 
     href: string,
